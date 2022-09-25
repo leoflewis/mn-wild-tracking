@@ -15,3 +15,13 @@ def get_schedule():
 def get_player(id):
     response = requests.get("https://statsapi.web.nhl.com/api/v1/people/{}/stats?stats=gameLog".format(id))
     return response
+
+
+class Game(models.Model):
+    game = None
+    def get_game(self, id):
+        response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
+
+        game = response.json()
+
+        return str(game)
