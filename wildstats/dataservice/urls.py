@@ -7,5 +7,6 @@ urlpatterns = [
     path('roster', views.roster, name='roster'),
     path('schedule', views.schedule, name='schedule'),
     path('game', views.game, name='game'),
-    path('player', views.player, name='player')
+    path('player/<int:player_id>', views.player, name='player')
+    
 ]

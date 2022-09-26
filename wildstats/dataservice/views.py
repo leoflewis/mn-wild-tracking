@@ -1,6 +1,8 @@
 from this import s
+from unittest import loader
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
+from django.template import loader
 from .models import Game, Roster, Player, Schedule
 
 # Create your views here.
@@ -15,11 +17,11 @@ def roster(request):
         response.write(person['person']['fullName'] + " " + person['position']['name'])
     return response
 
-def player(request):
-    player = Player().get_player(8478864)
-    response = HttpResponse()
-    response.write(player)
-    return response
+def player(request, player_id):
+    player = Player().get_player(player_id)
+    name = player['people'][0]['fullName']
+    context ={'player':player, 'name':name}
+    return render(request, "../templates/player.html", context)
 
 def schedule(request):
     schedule = Schedule().get_schedule()
