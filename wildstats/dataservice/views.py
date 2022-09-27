@@ -1,23 +1,21 @@
+import json
 from this import s
 from unittest import loader
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.template import loader
-from .models import Game, Roster, Player, Schedule
+from .models import Game, Roster, Player, Schedule, Home
 
 # Create your views here.
 
 def index(request):
-    context = {}
+    home = Home().get_team()
+    context = {"home": home}
     return render(request, "../templates/home.html", context)
 
 def roster(request):
     roster = Roster().get_roster()
-    
-    #for person in roster['roster']:
-        #response.write(person['person']['fullName'] + " " + person['position']['name'])
-
-    context = {'roster': roster}
+    context = {"roster": roster}
     return render(request, "../templates/roster.html", context)
 
 def player(request, player_id):
