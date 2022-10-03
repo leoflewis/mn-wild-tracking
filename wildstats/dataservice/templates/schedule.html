@@ -1,9 +1,24 @@
-<ul>
-    <li><a href="../home">Home</a></li>
-    <li><a href="../home/roster">Roster</a></li>
-    <li><a href="">Schedule</a></li>
-    <li><a href="..">Stats</a></li>
-    <li><a href="..">About</a></li>
-</ul>
+{% extends "home.html" %}
+{% block content %}
 
-<p>{{schedule}}</p>
+<div>
+    {% for date in schedule %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title text-center">{{ date.date }}</h2>
+            <div>
+                {%for game in date.games %}
+                <p  class="m-0 text-dark text-center ">
+                {{game.teams.away.team.name}} - {{game.teams.away.score}}
+                at
+                {{game.teams.home.team.name}} - {{game.teams.home.score}} 
+
+                </p>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{%endblock%}

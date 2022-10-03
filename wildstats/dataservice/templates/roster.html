@@ -1,14 +1,16 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <ul>
-        <li><a href="../home">Home</a></li>
-        <li><a href="">Roster</a></li>
-        <li><a href="../home/schedule">Schedule</a></li>
-        <li><a href="..">Stats</a></li>
-        <li><a href="..">About</a></li>
-    </ul> 
+{% extends "home.html" %}
+{% block content %}
 
-    <p>{{roster}}</p>
-</body>
-</html>
+<div>
+    {% for player in roster%}
+    <div class="card mb-4">
+        <div class="card-body">
+            <p  class="m-0 text-dark text-center ">{{player.jerseyNumber}}</p>
+            <h2 class="card-title text-center">{{player.person.fullName}}</h2>
+            <p  class="m-0 text-dark text-center ">{{player.position.name}}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{%endblock%}

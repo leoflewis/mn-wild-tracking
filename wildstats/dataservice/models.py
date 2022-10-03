@@ -9,7 +9,7 @@ class Game(models.Model):
 class Roster(models.Model):
     def get_roster(self):
         response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30/roster")
-        return response.text
+        return response.json()
 
 class Player(models.Model):
     def get_player(self, id):
@@ -22,6 +22,15 @@ class Schedule(models.Model):
         return response.json()
 
 class Home(models.Model):
-        def get_team(self):
-            response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30")
-            return response.json()
+    def get_team(self):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30")
+        return response.json()
+
+class Stats(models.Model):
+    def get_team_stats(self):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30/stats")
+        return response.json()
+    
+    def get_player_stats(self, id):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/people/8471214/stats?stats=statsSingleSeason")
+        return response.json()
