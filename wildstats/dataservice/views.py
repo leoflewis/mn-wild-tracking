@@ -31,11 +31,10 @@ def schedule(request):
     context = {"schedule": schedule['dates'] } 
     return render(request, "../templates/schedule.html", context)
 
-def game(request):
-    game = Game().get_game(2022010007)
-    response = HttpResponse()
-    response.write(game)
-    return response
+def game(request, game_id):
+    game = Game().get_game(game_id)
+    context = {"game" : game}
+    return render(request, "../templates/game.html", context)
 
 def team_stats(request):
     stats = Stats().get_team_stats()

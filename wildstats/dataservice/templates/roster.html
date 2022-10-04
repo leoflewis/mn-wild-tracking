@@ -1,16 +1,20 @@
 {% extends "home.html" %}
 {% block content %}
 
-<div>
-    {% for player in roster%}
-    <div class="card mb-4">
-        <div class="card-body">
-            <p  class="m-0 text-dark text-center ">{{player.jerseyNumber}}</p>
-            <h2 class="card-title text-center">{{player.person.fullName}}</h2>
-            <p  class="m-0 text-dark text-center ">{{player.position.name}}</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 left">
+            {% for player in roster%}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="m-0 text-dark ">{{player.jerseyNumber}}</p>
+                    <h2 class="card-title text-center">{{player.person.fullName}}</h2>
+                    <p class="m-0 text-dark text-center ">{{player.position.name}}</p>
+                    <a class="btn btn-danger" href="player/{{player.person.id}}">More &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
 </div>
-
 {%endblock%}

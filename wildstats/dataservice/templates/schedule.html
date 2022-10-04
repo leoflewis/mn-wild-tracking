@@ -1,24 +1,26 @@
 {% extends "home.html" %}
 {% block content %}
-
-<div>
-    {% for date in schedule %}
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title text-center">{{ date.date }}</h2>
-            <div>
-                {%for game in date.games %}
-                <p  class="m-0 text-dark text-center ">
-                {{game.teams.away.team.name}} - {{game.teams.away.score}}
-                at
-                {{game.teams.home.team.name}} - {{game.teams.home.score}} 
-
-                </p>
-                {%endfor%}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 left">
+            {% for date in schedule %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center">{{ date.date }}</h2>
+                    <div>
+                        {%for game in date.games %}
+                        <p  class="m-0 text-dark text-center ">
+                        {{game.teams.away.team.name}} - {{game.teams.away.score}}
+                        at
+                        {{game.teams.home.team.name}} - {{game.teams.home.score}} 
+                        </p>
+                        <a class="btn btn-danger" href="game/{{game.gamePk}}">More &rarr;</a>
+                        {%endfor%}
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
 </div>
-
 {%endblock%}
