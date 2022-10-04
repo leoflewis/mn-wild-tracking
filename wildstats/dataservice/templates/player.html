@@ -4,8 +4,14 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 left">
-            {{name}}
+            {% for person in player.people %}
+                <h1>{{person.fullName}} #{{person.primaryNumber}}</h1>
+                <h4>{{person.primaryPosition.name}}</h2>
+                <h4>{{person.birthCity}}, {{person.birthCountry}}</h4>
+                <h4>{{person.height}} - {{person.weight}}lbs</h5>
+            {% endfor %}
         </div>
+        
     </div>
 </div>
 {%endblock%}

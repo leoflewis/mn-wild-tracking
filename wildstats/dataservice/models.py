@@ -16,6 +16,10 @@ class Player(models.Model):
         response = requests.get("https://statsapi.web.nhl.com/api/v1/people/{}/".format(id))
         return response.json()
 
+    def get_player_stats(self, id):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/people/8471214/stats?stats=statsSingleSeason")
+        return response.json()
+
 class Schedule(models.Model):
     def get_schedule(self):
         response = requests.get("https://statsapi.web.nhl.com/api/v1/schedule?teamId=30&season=20222023&gameType=R")
@@ -30,7 +34,4 @@ class Stats(models.Model):
     def get_team_stats(self):
         response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30/stats")
         return response.json()
-    
-    def get_player_stats(self, id):
-        response = requests.get("https://statsapi.web.nhl.com/api/v1/people/8471214/stats?stats=statsSingleSeason")
-        return response.json()
+

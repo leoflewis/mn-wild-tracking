@@ -22,8 +22,8 @@ def roster(request):
 
 def player(request, player_id):
     player = Player().get_player(player_id)
-    name = player['people'][0]['fullName']
-    context ={'player':player, 'name':name}
+    stats = Player().get_player_stats(player_id)
+    context ={"player": player, "stats": stats}
     return render(request, "../templates/player.html", context)
 
 def schedule(request):
