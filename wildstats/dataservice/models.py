@@ -17,7 +17,7 @@ class Player(models.Model):
         return response.json()
 
     def get_player_stats(self, id):
-        response = requests.get("https://statsapi.web.nhl.com/api/v1/people/8471214/stats?stats=statsSingleSeason")
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/people/{}/stats?stats=statsSingleSeason".format(id))
         return response.json()
 
 class Schedule(models.Model):

@@ -11,7 +11,27 @@
                 <h4>{{person.height}} - {{person.weight}}lbs</h5>
             {% endfor %}
         </div>
-        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-center"></h2>
+                <div>
+                    <table>
+                        <tr>
+                            <th>Time on ice 21-22</th>
+                            <th>Assists 21-22</th>
+                        </tr>
+                        <tr>
+                            {% for stat in stats %}
+                                {% for x in stat.splits %}
+                                    <td>{{x.stat.timeOnIce}}</td>
+                                    <td>{{x.stat.assists}}</td>
+                                {%endfor%}
+                            {%endfor%}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {%endblock%}
