@@ -6,14 +6,12 @@
             {% for date in schedule %}
             <div class="card mb-4">
                 <div class="card-body">
-                    <h2 class="card-title text-center">{{ date.date }}</h2>
                     <div>
                         {%for game in date.games %}
-                        <p  class="m-0 text-dark text-center ">
-                        {{game.teams.away.team.name}} - {{game.teams.away.score}}
-                        at
-                        {{game.teams.home.team.name}} - {{game.teams.home.score}} 
-                        </p>
+                        <h2 class="card-title text-center">{{game.teams.away.team.name}} at {{game.teams.home.team.name}}</h2>
+                        <p  class="m-0 text-dark text-center ">{{ date.date }}</h2>
+                        <p  class="m-0 text-dark text-center ">{{game.teams.away.team.name}} - {{game.teams.away.score}} </p>
+                        <p  class="m-0 text-dark text-center ">{{game.teams.home.team.name}} - {{game.teams.home.score}} </p>
                         <a class="btn btn-danger" href="game/{{game.gamePk}}">More &rarr;</a>
                         {%endfor%}
                     </div>
