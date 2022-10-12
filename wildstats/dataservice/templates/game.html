@@ -1,10 +1,43 @@
 {% extends "home.html" %}
 {% block content %}
+<style>
+    .scoreboard {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 1000px;
+        font-family: 'Quicksand', sans-serif;
+    }
+    .scoreboard__name,.scoreboard__score {
+        padding: 10px;
+        text-align: center;
+    }
 
+    .scoreboard__name {
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .scoreboard__name--one {
+        color: #A6192E;
+    }
+
+    .scoreboard__name--two {
+        color: #154734;
+    }
+
+    .scoreboard__score {
+        font-size: 2em;
+    }
+</style>
 <div class="container">
     <div class="row">
         <div class="col-md-8 mt-3 left">
-            {{game}}
+            <div class="scoreboard">
+                <div class="scoreboard__name scoreboard__name--one">{{game.gameData.teams.away.name}}</div>
+                <div class="scoreboard__name scoreboard__name--two">{{game.gameData.teams.home.name}}</div>
+                <div class="scoreboard__score" data-for-player="one">0</div>
+                <div class="scoreboard__score" data-for-player="two">0</div>
+            </div>
         </div>
     </div>
 </div>

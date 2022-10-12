@@ -2,6 +2,7 @@
 {% block content %}
 
 <div class="container">
+
     <div class="row">
         <div class="col-md-8 mt-3 left">
             {% for person in player.people %}
@@ -10,15 +11,12 @@
                 <h4>{{person.birthCity}}, {{person.birthCountry}}</h4>
                 <h4>{{person.height}} - {{person.weight}}lbs</h5>
             {% endfor %}
-        </div>
-        <div class="card mb-4">
-            <div class="card-body">
-                <h2 class="card-title text-center"></h2>
-                <div>
+            <div>
+                {% if person.primaryPosition.name != 'Goalie' %}
                     <table>
                         <tr>
-                            <th>Time on ice 21-22</th>
-                            <th>Assists 21-22</th>
+                            <th>Time on ice</th>
+                            <th>Assists</th>
                         </tr>
                         <tr>
                             {% for stat in stats %}
@@ -29,7 +27,25 @@
                             {%endfor%}
                         </tr>
                     </table>
-                </div>
+                {% endif %}
+            </div>
+            <div>
+                {% if person.primaryPosition.name == 'Goalie' %}
+                    <table>
+                        <tr>
+                            <th>Goalie</th>
+                            <th>Stuff</th>
+                        </tr>
+                        <tr>
+                            {% for stat in stats %}
+                                {% for x in stat.splits %}
+                                    <td>{{x.stat.timeOnIce}}</td>
+                                    <td>{{x.stat.assists}}</td>
+                                {%endfor%}
+                            {%endfor%}
+                        </tr>
+                    </table>
+                {% endif %}
             </div>
         </div>
     </div>
