@@ -8,8 +8,8 @@
             {% for person in player.people %}
                 <h1>{{person.fullName}} #{{person.primaryNumber}}</h1>
                 <h4>{{person.primaryPosition.name}}</h2>
-                <h4>{{person.birthCity}}, {{person.birthCountry}}</h4>
-                <h4>{{person.height}} - {{person.weight}}lbs</h5>
+                <h5>{{person.birthCity}}, {{person.birthCountry}}</h4>
+                <h5>{{person.height}} - {{person.weight}}lbs</h5>
             {% endfor %}
             <br>
             <div>
@@ -31,7 +31,6 @@
                         </thead>
                         <tbody>
                         
-                        <!-- will have to come back to this when theres data-->
                         <th scope="row"></th>
                         {% for stat in stats %}
                         {% for x in stat.splits %}

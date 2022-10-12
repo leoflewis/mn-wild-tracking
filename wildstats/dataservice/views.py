@@ -10,8 +10,7 @@ from .models import Game, Roster, Player, Schedule, Home, Stats
 def index(request):
     home = Home().get_team()
     context = {
-        "home": home,
-        "name": home['teams'][0]['name']
+        "home": home
     }
     return render(request, "../templates/home.html", context)
 
