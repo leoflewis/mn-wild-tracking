@@ -19,14 +19,15 @@
                             <th scope="col">year</th>
                             <th scope="col">team</th>
                             <th scope="col">games</th>
-                            <th scope="col">goals</th>
-                            <th scope="col">assits</th>
-                            <th scope="col">points</th>
-                            <th scope="col">toi</th>
-                            <th scope="col">hits</th>
-                            <th scope="col">pim</th>
+                            <th scope="col">saves</th>
+                            <th scope="col">gaa</th>
+                            <th scope="col">wins</th>
                             <th scope="col">s%</th>
-                            <th scope="col">fo%</th>
+                            <th scope="col">losses</th>
+                            <th scope="col">toi</th>
+                            <th scope="col">ev saves</th>
+                            <th scope="col">ev shots</th>
+                            <th scope="col">ev s%</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -39,14 +40,15 @@
                             <td>{{x.season}}</td>
                             <td>{{x.team.name}}</td>
                             <td>{{x.stat.games}}</td>
-                            <td>{{x.stat.goals}}</td>
-                            <td>{{x.stat.assists}}</td>
-                            <td>{{x.stat.points}}</td>
+                            <td>{{x.stat.saves}}</td>
+                            <td>{{x.stat.goalAgainstAverage}}</td>
+                            <td>{{x.stat.wins}}</td>
+                            <td>{{x.stat.savePercentage}}</td>
+                            <td>{{x.stat.losses}}</td>
                             <td>{{x.stat.timeOnIce}}</td>
-                            <td>{{x.stat.hits}}</td>
-                            <td>{{x.stat.pim}}</td>
-                            <td>{{x.stat.shotPct}}</td>
-                            <td>{{x.stat.faceOffPct}}</td>
+                            <td>{{x.stat.evenSaves}}</td>
+                            <td>{{x.stat.evenShots}}</td>
+                            <td>{{x.stat.evenStrengthSavePercentage}}</td>
                         </tr>
                         {%endfor%}
                         {%endfor%}

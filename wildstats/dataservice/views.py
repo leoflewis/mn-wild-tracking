@@ -24,7 +24,11 @@ def player(request, player_id):
     player = Player().get_player(player_id)
     stats = Player().get_player_stats(player_id)
     context ={"player": player, "stats": stats['stats']}
-    return render(request, "../templates/player.html", context)
+    print(player['people'][0]['primaryPosition']['type'])
+    if(player['people'][0]['primaryPosition']['type']) != 'Goalie':
+        return render(request, "../templates/player.html", context)
+    else:
+        return render(request, "../templates/goalie.html", context)
 
 def schedule(request):
     schedule = Schedule().get_schedule()
