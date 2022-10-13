@@ -1,6 +1,14 @@
 {% extends "home.html" %}
 {% block content %}
 <style>
+    .time{
+        padding: 10px;
+        
+    }
+    .table{
+        
+        padding: 10px;
+    }
     .scoreboard {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -31,13 +39,43 @@
 </style>
 <div class="container">
     <div class="row">
-        <div class="col-md-8 mt-3 left">
+        <div class="col-md-8 mt-3 ">
             <div class="scoreboard">
                 <div class="scoreboard__name scoreboard__name--one">{{game.gameData.teams.away.name}}</div>
                 <div class="scoreboard__name scoreboard__name--two">{{game.gameData.teams.home.name}}</div>
-                <div class="scoreboard__score" data-for-player="one">0</div>
-                <div class="scoreboard__score" data-for-player="two">0</div>
+                <div class="scoreboard__score" data-for-player="one">{{game.liveData.linescore.teams.away.goals}}</div>
+                <div class="scoreboard__score" data-for-player="two">{{game.liveData.linescore.teams.home.goals}}</div>
             </div>
+            <br>
+            <br>
+            
+            <div class="time">
+                <h3>{{game.liveData.linescore.currentPeriodTimeRemaining}} in {{game.liveData.linescore.currentPeriodOrdinal}} </h1>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        {% for period in game.liveData.linescore.periods %}
+                        <th scope="col">{{period.num}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{game.gameData.teams.away.name}}</th>
+                            {% for period in game.liveData.linescore.periods %}
+                            <th scope="row">{{period.away.goals}}</th>
+                            {%endfor%}
+                    </tr>
+                    <tr>
+                        <th scope="row">{{game.gameData.teams.home.name}}</th>
+                            {% for period in game.liveData.linescore.periods %}
+                            <th scope="row">{{period.home.goals}}</th>
+                            {%endfor%}
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

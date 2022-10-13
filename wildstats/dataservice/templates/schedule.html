@@ -12,6 +12,7 @@
                         <p  class="m-0 text-dark text-center ">{{ date.date }}</h2>
                         <p  class="m-0 text-dark text-center ">{{game.teams.away.team.name}} - {{game.teams.away.score}} </p>
                         <p  class="m-0 text-dark text-center ">{{game.teams.home.team.name}} - {{game.teams.home.score}} </p>
+                        <p  class="m-0 text-dark text-center ">{{game.status.detailedState}}</p>
                         <a class="btn btn-danger" href="game/{{game.gamePk}}">More &rarr;</a>
                         {%endfor%}
                     </div>
