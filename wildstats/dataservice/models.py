@@ -3,7 +3,6 @@ import requests
 
 class Game(models.Model):
     def get_game(self, id):
-        id = 2022020005
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         return response.json()
 
