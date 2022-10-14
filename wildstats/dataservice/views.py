@@ -36,7 +36,12 @@ def schedule(request):
 
 def game(request, game_id):
     game = Game().get_game(game_id)
-    context = {"game" : game}
+    data = Game().parse_game_data(game_id)
+    if data == None or len(data) == 0:
+        status = "*** live play by play data incoming ***"
+    else:
+        status = ""
+    context = {"game" : game, "data": data, "status": status}
     return render(request, "../templates/game.html", context)
 
 def team_stats(request):

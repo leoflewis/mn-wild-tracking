@@ -48,7 +48,7 @@
             </div>
             <br>
             <br>
-            
+
             <div class="time">
                 <h3>{{game.liveData.linescore.currentPeriodTimeRemaining}} in {{game.liveData.linescore.currentPeriodOrdinal}} </h1>
             </div>
@@ -77,6 +77,13 @@
                 </tbody>
             </table>
         </div>
+
+    </div>
+    <div>
+        <p>{{status}}</p>
+        {% for line in data %}
+        <p>{{line}}</p>
+        {%endfor%}
     </div>
 </div>
 {%endblock%}
