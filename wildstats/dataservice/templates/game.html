@@ -80,6 +80,11 @@
 
     </div>
     <div>
+        {% for line in corsi %}
+        <p>{{line}}</p>
+        {%endfor%}
+    </div>
+    <div>
         <p>{{status}}</p>
         {% for line in data %}
         <p>{{line}}</p>

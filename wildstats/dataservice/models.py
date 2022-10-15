@@ -14,7 +14,6 @@ class Game(models.Model):
         shifts= shifts['data']
         #return shifts['data']
         #team codes
-        print(shifts)
         home = data['gameData']['teams']['home']['triCode']
         away = data['gameData']['teams']['away']['triCode']
         shift_count = 0
@@ -61,6 +60,56 @@ class Game(models.Model):
                 shift_count += 1
             lines.append("")
         lines.append((shift_count))
+        return lines
+    
+    def compute_corsi(self, game_id):
+        response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(game_id))
+        data = response.json()
+        print(data['liveData']['plays']['allPlays'])
+        if data['liveData']['plays']['allPlays'] == []:
+            return []
+        lines = []
+        home = data['gameData']['teams']['home']['triCode']
+        away = data['gameData']['teams']['away']['triCode']
+        home_proper_shots = 0
+        home_attempt_shots = 0
+        home_block_shots = 0
+        home_corsi_shots = 0
+        away_proper_shots = 0
+        away_attempt_shots = 0
+        away_block_shots = 0
+        away_corsi_shots = 0
+        for play in data['liveData']['plays']['allPlays']:
+            if play['result']['event'] == 'Shot' or play['result']['event'] == 'Goal':
+                if play['team']['triCode'] == home:
+                    home_proper_shots += 1
+                if play['team']['triCode'] == away:
+                    away_proper_shots += 1
+            if play['result']['event'] == 'Blocked Shot':
+                if play['team']['triCode'] == home:
+                    home_block_shots += 1
+                if play['team']['triCode'] == away:
+                    away_block_shots += 1
+            if play['result']['event'] == 'Missed Shot':
+                if play['team']['triCode'] == home:
+                    home_attempt_shots += 1
+                if play['team']['triCode'] == away:
+                    away_attempt_shots += 1
+        home_corsi_shots = away_block_shots + home_attempt_shots + home_proper_shots
+        away_corsi_shots = home_block_shots + away_attempt_shots + away_proper_shots
+
+        total_corsi = home_corsi_shots + away_corsi_shots
+
+        lines.append("home team " + home + " 5v5 stats")
+        lines.append("total shots " + str(home_proper_shots))
+        lines.append("blocked opposing shots " + str(home_block_shots))
+        lines.append("corsi for shots " + str(away_block_shots + home_attempt_shots + home_proper_shots))
+        lines.append("corsi share " + str((home_corsi_shots / total_corsi) * 100) + "%")
+        lines.append("away team 5v5 stats " + away)
+        lines.append("total shots " + str(away_proper_shots))
+        lines.append("blocked opposing shots " + str(away_block_shots))
+        lines.append("corsi for shots " + str(home_block_shots + away_attempt_shots + away_proper_shots))
+        lines.append("corsi share " + str((away_corsi_shots / total_corsi) * 100) + "%")
         return lines
 
 class Roster(models.Model):
