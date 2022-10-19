@@ -22,10 +22,14 @@ class Game(models.Model):
         for play in data['liveData']['plays']['allPlays']:
             #exclude certain event types because they are useless
             event = play['result']['event']
+            
             if event != 'Game Scheduled' and event != 'Period Ready' and event != 'Period Start' and event != 'Game Official' and event != 'Game End' and event != 'Period End' and event != 'Period Official':
                 #periods need to match on play and shift
                 period = play['about']['period']
                 play_time = play['about']['periodTime']
+                if event !='Stoppage':
+                    player = play['players'][0]['player']['id']
+
                 if len(shifts) == 0:
                     return []
                 #check each shift
@@ -41,7 +45,7 @@ class Game(models.Model):
                     #exclude where shift starts at the same time play stopped and where shift ends at the same time as a faceoff
                     if shift['period'] == period and (play_time >= shift_start and play_time <= shift_end):
                         
-                        if not ((event == "Stoppage" and play_time == shift_start) or (event == "Faceoff" and play_time == shift_end) or (event == "Penalty" and play_time == shift_start) or (event == "Goal" and play_time == shift_start) or (event == "Hit" and play_time == shift_end) or (event == "Giveaway" and play_time == shift_end)):
+                        if not ((shift_end == play_time and player == shift['playerId']) or (event == "Stoppage" and play_time == shift_start) or (event == "Faceoff" and play_time == shift_end) or (event == "Penalty" and play_time == shift_start) or (event == "Goal" and play_time == shift_start) or (event == "Hit" and play_time == shift_end) or (event == "Giveaway" and play_time == shift_end)):
                             #log home team on ice
                             if shift['teamAbbrev'] == home:
                                 home_names += shift['lastName'] + ", " 
@@ -65,7 +69,7 @@ class Game(models.Model):
     def compute_corsi(self, game_id):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(game_id))
         data = response.json()
-        print(data['liveData']['plays']['allPlays'])
+        #print(data['liveData']['plays']['allPlays'])
         if data['liveData']['plays']['allPlays'] == []:
             return []
         lines = []
@@ -100,12 +104,12 @@ class Game(models.Model):
 
         total_corsi = home_corsi_shots + away_corsi_shots
 
-        lines.append("home team " + home + " 5v5 stats")
+        lines.append("home team " + home + " all strengths stats:")
         lines.append("total shots " + str(home_proper_shots))
         lines.append("blocked opposing shots " + str(home_block_shots))
         lines.append("corsi for shots " + str(away_block_shots + home_attempt_shots + home_proper_shots))
         lines.append("corsi share " + str((home_corsi_shots / total_corsi) * 100) + "%")
-        lines.append("away team 5v5 stats " + away)
+        lines.append("away team "  + away + " all strengths stats:")
         lines.append("total shots " + str(away_proper_shots))
         lines.append("blocked opposing shots " + str(away_block_shots))
         lines.append("corsi for shots " + str(home_block_shots + away_attempt_shots + away_proper_shots))
