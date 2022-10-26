@@ -29,11 +29,6 @@ def player(request, player_id):
     else:
         return render(request, "../templates/goalie.html", context)
 
-def charts(request, game_id):
-    chart_id = str(game_id) + ".jpg"
-    context = {"chart_id": chart_id}
-    return render(request, "../templates/pics/charts.html", context)
-
 def schedule(request):
     schedule = Schedule().get_schedule()
     context = {"schedule": schedule['dates'] } 
