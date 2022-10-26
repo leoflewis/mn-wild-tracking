@@ -29,6 +29,11 @@ def player(request, player_id):
     else:
         return render(request, "../templates/goalie.html", context)
 
+def charts(request, game_id):
+    chart_id = str(game_id) + ".jpg"
+    context = {"chart_id": chart_id}
+    return render(request, "../templates/pics/charts.html", context)
+
 def schedule(request):
     schedule = Schedule().get_schedule()
     context = {"schedule": schedule['dates'] } 
@@ -38,11 +43,12 @@ def game(request, game_id):
     game = Game().get_game(game_id)
     data = Game().parse_game_data(game_id)
     corsi = Game().compute_corsi(game_id)
+    pic = Game().make_figure(game_id)
     if (data == None or len(data) == 0) or (corsi == None or len(corsi) == 0):
         status = "*** live play by play data incoming ***"
     else:
         status = ""
-    context = {"game" : game, "data": data, "corsi": corsi, "status": status}
+    context = {"game" : game, "data": data, "corsi": corsi, "status": status, "fig": pic}
     return render(request, "../templates/game.html", context)
 
 def team_stats(request):

@@ -19,7 +19,10 @@
         padding: 10px;
         text-align: center;
     }
-
+    .imge{
+        position: absolute; 
+        right:100px;
+    }
     .scoreboard__name {
         font-weight: bold;
         border-bottom: 1px solid #ddd;
@@ -32,7 +35,9 @@
     .scoreboard__name--two {
         color: #154734;
     }
-
+    .plays{
+        position: relative;
+    }
     .scoreboard__score {
         font-size: 2em;
     }
@@ -77,18 +82,17 @@
                 </tbody>
             </table>
         </div>
-
     </div>
-    <div>
-        {% for line in corsi %}
-        <p>{{line}}</p>
-        {%endfor%}
-    </div>
-    <div>
+</div>
+<div class="imge">
+    <img src="{{fig}}" alt="shot chart">
+    <div class="plays">
         <p>{{status}}</p>
         {% for line in data %}
         <p>{{line}}</p>
         {%endfor%}
     </div>
 </div>
+
+
 {%endblock%}
