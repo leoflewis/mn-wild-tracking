@@ -85,8 +85,13 @@
     </div>
 </div>
 <div class="imge">
-    <div><img src="{{fig}}" alt="shot chart">></div>
+    <div><img src="{{fig}}" alt="shot chart"></div>
     <div><img src="{{chart}}" alt="shot chart"></div>
+    <div>
+        {% for line in corsi %}
+        <p>{{line}}</p>
+        {%endfor%}
+    </div>
     <div class="plays">
         <p>{{status}}</p>
         {% for line in data %}
