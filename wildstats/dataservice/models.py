@@ -142,7 +142,7 @@ class Game(models.Model):
 
         home_A_shots_x, home_A_shots_y = [], []
         away_A_shots_x, away_A_shots_y = [], []
-
+        
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
             if play['result']['event'] == 'Goal':
@@ -210,13 +210,15 @@ class Game(models.Model):
         plt.scatter(away_A_shots_x, away_A_shots_y, marker='x', label='away shot attempt', color='red')
 
         plt.title(away + " at " + home)
-        plt.legend(loc='upper left', numpoints=1, ncol=2, fontsize=8, bbox_to_anchor=(0, 0))
+        plt.legend(loc="upper right", ncol=2)
+        #loc='upper left', numpoints=1, , fontsize=8, bbox_to_anchor=(0, 0)
         plt.axis("off")
         
         img = io.BytesIO()
         plt.savefig(img, format='png', bbox_inches='tight')
         img.seek(0)
         encoded = base64.b64encode(img.getvalue())
+        plt.close(fig)
         return "data:image/png;base64, {}".format(encoded.decode('utf-8'))
         
 
@@ -269,6 +271,54 @@ class Game(models.Model):
         lines.append("corsi for shots " + str(home_block_shots + away_attempt_shots + away_proper_shots))
         lines.append("corsi share " + str((away_corsi_shots / total_corsi) * 100) + "%")
         return lines
+
+    def chart_corsi(self, id):
+        response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
+        data = response.json()
+
+        home = data['gameData']['teams']['home']['triCode']
+        away = data['gameData']['teams']['away']['triCode']
+        time = 0 
+        home_shots = 0
+        away_shots = 0
+        fig = plt.figure(1)
+        for play in data['liveData']['plays']['allPlays']:
+            period = play['about']['period']
+            if play['result']['event'] == 'Goal':
+                if play['team']['triCode'] == home:
+                    time = convert_time(play['about']['periodTime'], period)
+                    home_shots += 1
+                    plt.plot(time, home_shots,marker='o', color='blue')
+                if play['team']['triCode'] == away:
+                    time = convert_time(play['about']['periodTime'], period)
+                    away_shots += 1
+                    plt.plot(time, away_shots, marker='o', color='red')
+            if play['result']['event'] == 'Shot':
+                if play['team']['triCode'] == home:
+                    time = convert_time(play['about']['periodTime'], period)
+                    home_shots += 1
+                    plt.plot(time, home_shots, marker='^', color='blue')
+                if play['team']['triCode'] == away:
+                    time = convert_time(play['about']['periodTime'], period)
+                    away_shots += 1
+                    plt.plot(time, away_shots, marker='^', color='red')
+        plt.ylabel("Shots + Goals")
+        plt.xlabel("Time")
+        img = io.BytesIO()
+        plt.savefig(img, format='png', bbox_inches='tight')
+        img.seek(0)
+        encoded = base64.b64encode(img.getvalue())
+        plt.close(fig)
+        return "data:image/png;base64, {}".format(encoded.decode('utf-8'))
+
+def convert_time(time, period):
+    if period == 2:
+        return 20 + (int(time[0:2]) + (int(time[3:5]) / 100))
+    if period == 3:
+        return 40 + (int(time[0:2]) + (int(time[3:5]) / 100))
+    if period == 4:
+        return 60 + (int(time[0:2]) + (int(time[3:5]) / 100))
+    return (int(time[0:2]) + (int(time[3:5]) / 100))
 
 class Roster(models.Model):
     def get_roster(self):

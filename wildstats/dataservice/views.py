@@ -39,11 +39,12 @@ def game(request, game_id):
     data = Game().parse_game_data(game_id)
     corsi = Game().compute_corsi(game_id)
     pic = Game().make_figure(game_id)
+    chart = Game().chart_corsi(game_id)
     if (data == None or len(data) == 0) or (corsi == None or len(corsi) == 0):
         status = "*** live play by play data incoming ***"
     else:
         status = ""
-    context = {"game" : game, "data": data, "corsi": corsi, "status": status, "fig": pic}
+    context = {"game" : game, "data": data, "corsi": corsi, "status": status, "fig": pic, "chart":chart}
     return render(request, "../templates/game.html", context)
 
 def team_stats(request):
