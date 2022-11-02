@@ -27,7 +27,7 @@ class Game(models.Model):
             #exclude certain event types because they are useless
             event = play['result']['event']
             
-            if event != 'Game Scheduled' and event != 'Period Ready' and event != 'Period Start' and event != 'Game Official' and event != 'Game End' and event != 'Period End' and event != 'Period Official':
+            if event != 'Official Challenge' and event != 'Game Scheduled' and event != 'Period Ready' and event != 'Period Start' and event != 'Game Official' and event != 'Game End' and event != 'Period End' and event != 'Period Official' and event != "Shootout Complete":
                 #periods need to match on play and shift
                 period = play['about']['period']
                 play_time = play['about']['periodTime']
