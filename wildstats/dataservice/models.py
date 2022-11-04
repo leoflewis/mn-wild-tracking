@@ -264,13 +264,13 @@ class Game(models.Model):
         lines.append("total shots " + str(home_proper_shots))
         lines.append("blocked opposing shots " + str(home_block_shots))
         lines.append("corsi for shots " + str(away_block_shots + home_attempt_shots + home_proper_shots))
-
+        if total_corsi > 0:
+            lines.append("corsi share " + str((home_corsi_shots / total_corsi) * 100) + "%")
         lines.append("away team "  + away + " all strengths stats:")
         lines.append("total shots " + str(away_proper_shots))
         lines.append("blocked opposing shots " + str(away_block_shots))
         lines.append("corsi for shots " + str(home_block_shots + away_attempt_shots + away_proper_shots))
         if total_corsi > 0:
-            lines.append("corsi share " + str((home_corsi_shots / total_corsi) * 100) + "%")
             lines.append("corsi share " + str((away_corsi_shots / total_corsi) * 100) + "%")
         return lines
 
