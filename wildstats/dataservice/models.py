@@ -3,72 +3,13 @@ from django.db import models
 from matplotlib import pyplot as plt 
 import requests
 from os.path import exists
-import io, base64
+import io, base64, json
 
 
 class Game(models.Model):
     def get_game(self, id):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         return response.json()
-    
-    def parse_game_data(self, id):
-        data = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id)).json()
-        response = requests.get("https://api.nhle.com/stats/rest/en/shiftcharts?cayenneExp=gameId={}".format(id))
-        shifts = response.json()
-        shifts= shifts['data']
-        #return shifts['data']
-        #team codes
-        home = data['gameData']['teams']['home']['triCode']
-        away = data['gameData']['teams']['away']['triCode']
-        shift_count = 0
-        lines = []
-        #each play
-        for play in data['liveData']['plays']['allPlays']:
-            #exclude certain event types because they are useless
-            event = play['result']['event']
-            
-            if event != 'Official Challenge' and event != 'Game Scheduled' and event != 'Period Ready' and event != 'Period Start' and event != 'Game Official' and event != 'Game End' and event != 'Period End' and event != 'Period Official' and event != "Shootout Complete":
-                #periods need to match on play and shift
-                period = play['about']['period']
-                play_time = play['about']['periodTime']
-                if event !='Stoppage':
-                    player = play['players'][0]['player']['id']
-
-                if len(shifts) == 0:
-                    return []
-                #check each shift
-                home_names = home + " - "
-                away_names = away + " - "
-                home_state = 0
-                away_state = 0
-                for shift in shifts:
-                    #pull start and end time
-                    shift_start = shift['startTime']
-                    shift_end = shift['endTime']
-                    
-                    #exclude where shift starts at the same time play stopped and where shift ends at the same time as a faceoff
-                    if shift['period'] == period and (play_time >= shift_start and play_time <= shift_end):
-                        
-                        if not ((shift_end == play_time and player == shift['playerId']) or (event == "Stoppage" and play_time == shift_start) or (event == "Faceoff" and play_time == shift_end) or (event == "Penalty" and play_time == shift_start) or (event == "Goal" and play_time == shift_start) or (event == "Hit" and play_time == shift_end) or (event == "Giveaway" and play_time == shift_end)):
-                            #log home team on ice
-                            if shift['teamAbbrev'] == home:
-                                home_names += shift['lastName'] + ", " 
-                                home_state += 1
-                            #log away team on ice
-                            if shift['teamAbbrev'] == away:
-                                away_names += shift['lastName'] + ", "
-                                away_state += 1
-                home_names += " -  on ice for " + play['result']['event'] + " at " + play_time + " in " + str(period)
-                away_names += " -  on ice for " + play['result']['event'] + " at " + play_time + " in " + str(period)
-                #home v away
-                state = str(home_state-1) + "v" + str(away_state-1)
-                lines.append(home_names)
-                lines.append(away_names)
-                lines.append(state)
-                shift_count += 1
-            lines.append("")
-        lines.append((shift_count))
-        return lines
     
     def make_figure(self, id):
         fig, axes = plt.subplots(figsize=(20, 10))
@@ -255,24 +196,41 @@ class Game(models.Model):
                     home_attempt_shots += 1
                 if play['team']['triCode'] == away:
                     away_attempt_shots += 1
+
         home_corsi_shots = away_block_shots + home_attempt_shots + home_proper_shots
         away_corsi_shots = home_block_shots + away_attempt_shots + away_proper_shots
 
-        total_corsi = home_corsi_shots + away_corsi_shots
+        home_fenwick_shots = home_attempt_shots + home_proper_shots
+        away_fenwick_shots = away_attempt_shots + away_proper_shots
 
-        lines.append("home team " + home + " all strengths stats:")
-        lines.append("total shots " + str(home_proper_shots))
-        lines.append("blocked opposing shots " + str(home_block_shots))
-        lines.append("corsi for shots " + str(away_block_shots + home_attempt_shots + home_proper_shots))
+        total_corsi = home_corsi_shots + away_corsi_shots
+        total_shots = home_proper_shots + away_proper_shots
+        total_fenwick = home_attempt_shots + home_proper_shots + away_attempt_shots + away_proper_shots
+
+        corsi_json = {}
+        corsi_json['home_shots'] = home_proper_shots
+        corsi_json['home_blocks'] = home_block_shots
+        corsi_json['home_corsi_for'] = home_corsi_shots
+        corsi_json['home_fenwick_for'] = home_fenwick_shots
+        
+        corsi_json['away_shots'] = away_proper_shots
+        corsi_json['away_blocks'] = away_block_shots
+        corsi_json['away_corsi_for'] = away_corsi_shots
+        corsi_json['away_fenwick_for'] = away_fenwick_shots
+
+        if total_shots > 0:
+            corsi_json['home_shot_share'] = round((home_proper_shots / total_shots) * 100, 2)
+            corsi_json['away_shot_share'] = round((away_proper_shots / total_shots) * 100, 2)
+
         if total_corsi > 0:
-            lines.append("corsi share " + str((home_corsi_shots / total_corsi) * 100) + "%")
-        lines.append("away team "  + away + " all strengths stats:")
-        lines.append("total shots " + str(away_proper_shots))
-        lines.append("blocked opposing shots " + str(away_block_shots))
-        lines.append("corsi for shots " + str(home_block_shots + away_attempt_shots + away_proper_shots))
-        if total_corsi > 0:
-            lines.append("corsi share " + str((away_corsi_shots / total_corsi) * 100) + "%")
-        return lines
+            corsi_json['home_corsi_share'] = round((home_corsi_shots / total_corsi) * 100, 2)
+            corsi_json['away_corsi_share'] = round((away_corsi_shots / total_corsi) * 100, 2)
+
+        if total_fenwick > 0:
+            corsi_json['home_fenwick_share'] = round((home_fenwick_shots/ total_fenwick) * 100, 2)
+            corsi_json['away_fenwick_share'] = round((away_fenwick_shots / total_fenwick) * 100, 2)
+
+        return corsi_json
 
     def chart_corsi(self, id):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
