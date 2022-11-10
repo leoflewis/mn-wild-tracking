@@ -41,9 +41,6 @@
                     <a class="nav-link text-black font-weight-bold" href="http://localhost:8000/home/schedule">Schedule </a>
                 </li>
                 <li class="nav-item text-black"> 
-                    <a class="nav-link text-black font-weight-bold"  href="http://localhost:8000/home/stats">Stats </a>
-                </li>
-                <li class="nav-item text-black"> 
                     <a class="nav-link text-black font-weight-bold"  href="http://localhost:8000/home/about">About </a>
                 </li>
             </ul>
@@ -51,7 +48,49 @@
     </div>
 </nav>
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 ">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Games</th>
+                        <th scope="col">Wins</th>
+                        <th scope="col">Loses</th>
+                        <th scope="col">Ot</th>
+                        <th scope="col">Pts</th>
+                        <th scope="col">PTS%</th>
+                        <th scope="col">G/GM</th>
+                        <th scope="col">GA/GM</th>
+                        <th scope="col">EVG Ratio</th>
+                        <th scope="col">PP%</th>
+                        <th scope="col">PPG</th>
+                        <th scope="col">PKGA</th>
 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in stats %}
+                    <tr>
+                        <th scope="row">{{stat.stat.gamesPlayed}}</th>
+                        <th scope="row">{{stat.stat.wins}}</th>
+                        <th scope="row">{{stat.stat.losses}}</th>
+                        <th scope="row">{{stat.stat.ot}}</th>
+                        <th scope="row">{{stat.stat.pts}}</th>
+                        <th scope="row">{{stat.stat.ptPctg}}</th>
+                        <th scope="row">{{stat.stat.goalsPerGame}}</th>
+                        <th scope="row">{{stat.stat.goalsAgainstPerGame}}</th>
+                        <th scope="row">{{stat.stat.evGGARatio}}</th>
+                        <th scope="row">{{stat.stat.powerPlayPercentage}}</th>
+                        <th scope="row">{{stat.stat.powerPlayGoals}}</th>
+                        <th scope="row">{{stat.stat.powerPlayGoalsAgainst}}</th>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 
 <footer class="py-3 bg-grey">

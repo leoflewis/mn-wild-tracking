@@ -4,13 +4,14 @@ from unittest import loader
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.template import loader
-from .models import Game, Roster, Player, Schedule, Home, Stats
+from .models import Game, Roster, Player, Schedule, Home
 # Create your views here.
 
 def index(request):
     home = Home().get_team()
+    stats = Home().get_team_stats()
     context = {
-        "home": home
+        "home": home, "stats": stats
     }
     return render(request, "../templates/home.html", context)
 

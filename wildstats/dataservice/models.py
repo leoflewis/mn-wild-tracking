@@ -304,8 +304,9 @@ class Home(models.Model):
         response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30")
         return response.json()
 
-class Stats(models.Model):
     def get_team_stats(self):
-        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30/stats")
-        return response.json()
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30?expand=team.stats")
+        stats = response.json()['teams'][0]['teamStats'][0]['splits']
+        print(stats)
+        return stats
 
