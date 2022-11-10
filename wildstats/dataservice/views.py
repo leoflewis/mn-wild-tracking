@@ -43,10 +43,6 @@ def game(request, game_id):
     context = {"game" : game, "corsi": corsi, "fig": pic, "chart": chart}
     return render(request, "../templates/game.html", context)
 
-def team_stats(request):
-    stats = Stats().get_team_stats()
-    context = {"team_stats":stats["stats"][0]["splits"]}
-    return render(request, "../templates/stats.html", context)
 
 def about(request):
     return render(request, "../templates/about.html")

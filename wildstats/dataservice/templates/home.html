@@ -54,6 +54,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th scope="col"></th>
                         <th scope="col">Games</th>
                         <th scope="col">Wins</th>
                         <th scope="col">Loses</th>
@@ -66,12 +67,13 @@
                         <th scope="col">PP%</th>
                         <th scope="col">PPG</th>
                         <th scope="col">PKGA</th>
-
+                        <th scope="col">PK%</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for stat in stats %}
                     <tr>
+                    {% for stat in stats %}
+                        <th scope="row">total/rank</th>
                         <th scope="row">{{stat.stat.gamesPlayed}}</th>
                         <th scope="row">{{stat.stat.wins}}</th>
                         <th scope="row">{{stat.stat.losses}}</th>
@@ -84,6 +86,7 @@
                         <th scope="row">{{stat.stat.powerPlayPercentage}}</th>
                         <th scope="row">{{stat.stat.powerPlayGoals}}</th>
                         <th scope="row">{{stat.stat.powerPlayGoalsAgainst}}</th>
+                        <th scope="row">{{stat.stat.penaltyKillPercentage}}</th>
                     </tr>
                     {%endfor%}
                 </tbody>
