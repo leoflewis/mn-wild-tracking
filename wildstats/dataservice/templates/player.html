@@ -12,6 +12,42 @@
                 <h5>{{person.height}} - {{person.weight}}lbs</h5>
             {% endfor %}
             <br>
+            <div> 
+                <table class="table">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">year</th>
+                            <th scope="col">team</th>
+                            <th scope="col">games</th>
+                            <th scope="col">goals</th>
+                            <th scope="col">assits</th>
+                            <th scope="col">points</th>
+                            <th scope="col">toi</th>
+                            <th scope="col">hits</th>
+                            <th scope="col">pim</th>
+                            <th scope="col">s%</th>
+                            <th scope="col">fo%</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{current_season.season}}</td>
+                                <td>{{current_season.team.name}}</td>
+                                <td>{{current_season.stat.games}}</td>
+                                <td>{{current_season.stat.goals}}</td>
+                                <td>{{current_season.stat.assists}}</td>
+                                <td>{{current_season.stat.points}}</td>
+                                <td>{{current_season.stat.timeOnIce}}</td>
+                                <td>{{current_season.stat.hits}}</td>
+                                <td>{{current_season.stat.pim}}</td>
+                                <td>{{current_season.stat.shotPct}}</td>
+                                <td>{{current_season.stat.faceOffPct}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+            <br>
             <div>
                     <table class="table">
                         <thead>
@@ -30,8 +66,6 @@
                         </tr>
                         </thead>
                         <tbody>
-                        
-                        <th scope="row"></th>
                         {% for stat in stats %}
                         {% for x in stat.splits %}
                         <tr>

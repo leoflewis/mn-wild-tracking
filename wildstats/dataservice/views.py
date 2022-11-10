@@ -22,8 +22,8 @@ def roster(request):
 def player(request, player_id):
     player = Player().get_player(player_id)
     stats = Player().get_player_stats(player_id)
-    context ={"player": player, "stats": stats['stats']}
-    print(player['people'][0]['primaryPosition']['type'])
+    current_season = stats['stats'][0]['splits'][len(stats['stats'][0]['splits'])-1]
+    context ={"player": player, "stats": stats['stats'], "current_season": current_season}
     if(player['people'][0]['primaryPosition']['type']) != 'Goalie':
         return render(request, "../templates/player.html", context)
     else:
