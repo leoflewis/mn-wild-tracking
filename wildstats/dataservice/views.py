@@ -10,8 +10,10 @@ from .models import Game, Roster, Player, Schedule, Home
 def index(request):
     home = Home().get_team()
     stats = Home().get_team_stats()
+    next_game = Home().get_next_game()
+    last_game = Home().get_last_game()
     context = {
-        "home": home, "stats": stats
+        "home": home, "stats": stats, "next_game": next_game, "last_game": last_game
     }
     return render(request, "../templates/home.html", context)
 

@@ -47,10 +47,51 @@
         </div>
     </div>
 </nav>
+
+
 {% block content %}
 <div class="container">
     <div class="row">
+        <div class="col-md-8 mt-3 left">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div>
+                        <p>Last Game</p>
+                        <h2 class="card-title text-center">{{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.away.team.name}} at {{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.home.team.name}}</h2>
+                        <p  class="m-0 text-dark text-center ">{{last_game.teams.0.previousGameSchedule.dates.0.date}}</h2>
+                        <p  class="m-0 text-dark text-center ">{{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.away.team.name}}: {{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.away.score}}</p>
+                        <p  class="m-0 text-dark text-center ">{{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.home.team.name}}: {{last_game.teams.0.previousGameSchedule.dates.0.games.0.teams.home.score}}</p>
+                        <p  class="m-0 text-dark text-center ">{{last_game.teams.0.previousGameSchedule.dates.0.games.0.venue.name}}</p>
+                        <a class="btn btn-danger" href="game/{{last_game.teams.0.previousGameSchedule.dates.0.games.0.gamePk}}">More &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-3 left">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div>
+                        <p>Next Game</p>
+                        <h2 class="card-title text-center">{{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.away.team.name}} at {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.home.team.name}}</h2>
+                        <p  class="m-0 text-dark text-center ">{{next_game.teams.0.nextGameSchedule.dates.0.date}}</h2>
+                        <p  class="m-0 text-dark text-center ">{{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.away.team.name}}: {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.away.leagueRecord.wins}} - {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.away.leagueRecord.losses}} - {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.away.leagueRecord.ot}}</p>
+                        <p  class="m-0 text-dark text-center ">{{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.home.team.name}}: {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.home.leagueRecord.wins}} - {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.home.leagueRecord.losses}} - {{next_game.teams.0.nextGameSchedule.dates.0.games.0.teams.home.leagueRecord.ot}}</p>
+                        <p  class="m-0 text-dark text-center ">{{next_game.teams.0.nextGameSchedule.dates.0.games.0.venue.name}}</p>
+                        <a class="btn btn-danger" href="game/{{next_game.teams.0.nextGameSchedule.dates.0.games.0.gamePk}}">More &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
         <div class="col-md-8 mt-3 ">
+            <h3>MN Wild totals this season</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -68,6 +109,10 @@
                         <th scope="col">PPG</th>
                         <th scope="col">PKGA</th>
                         <th scope="col">PK%</th>
+                        <th scope="col">S/GM</th>
+                        <th scope="col">SA</th>
+                        <th scope="col">Sh%</th>
+                        <th scope="col">S%</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,6 +132,10 @@
                         <th scope="row">{{stat.stat.powerPlayGoals}}</th>
                         <th scope="row">{{stat.stat.powerPlayGoalsAgainst}}</th>
                         <th scope="row">{{stat.stat.penaltyKillPercentage}}</th>
+                        <th scope="row">{{stat.stat.shotsPerGame}}</th>
+                        <th scope="row">{{stat.stat.shotsAllowed}}</th>
+                        <th scope="row">{{stat.stat.shootingPctg}}</th>
+                        <th scope="row">{{stat.stat.savePctg}}</th>
                     </tr>
                     {%endfor%}
                 </tbody>

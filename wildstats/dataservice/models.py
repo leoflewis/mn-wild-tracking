@@ -309,3 +309,12 @@ class Home(models.Model):
         stats = response.json()['teams'][0]['teamStats'][0]['splits']
         return stats
 
+    def get_next_game(self):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30?expand=team.schedule.next")
+        game = response.json()
+        return game
+
+    def get_last_game(self):
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/teams/30?expand=team.schedule.previous")
+        game = response.json()
+        return game
