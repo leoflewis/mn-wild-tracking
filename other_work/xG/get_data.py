@@ -4,8 +4,8 @@ import hockey_scraper, pandas, numpy, math
 # We want Fenwick(unblocked) shot data for as many games as possible. 
 
 # Scrape data
-print("Begining to scrape pbp. No shifts. Depening on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2022020210], False, data_format='Pandas')
+print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
+data = hockey_scraper.scrape_games([2021020001, 2021020002, 2021020003, 2021020004], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -29,16 +29,16 @@ df.drop(['Game_Id', 'Date', 'Description', 'Time_Elapsed',
 # Drop empty values, this will get rid of lots of unecessary events. It will also get rid of empty net goals.
 df.dropna(inplace=True)
 
-# Drop worthless events, also drop shootout data
+# Drop worthless events, also drop shootout events
 events = df[ (df.Event == 'FAC') | (df.Event == 'BLOCK') | (df.Event == 'PENL') | (df.Event == 'GIVE') | (df.Event == 'TAKE') | (df.Event == 'STOP') | (df.Event == 'HIT') | (df.Period == 5)].index
 df.drop(events, inplace=True)
 
 # We need to transpose goals/shots/misses so it reads as if they all happen on the same net.
-df.loc[(df['Period'].eq(1) | df['Period'].eq(3)) & df['Home_Zone'].eq('Def'), 'xC'] = df['xC'] * -1
-df.loc[(df['Period'].eq(1) | df['Period'].eq(3)) & df['Home_Zone'].eq('Def'), 'yC'] = df['yC'] * -1
 
-df.loc[(df['Period'].eq(2) | df['Period'].eq(4)) & df['Home_Zone'].eq('Off'), 'xC'] = df['xC'] * -1
-df.loc[(df['Period'].eq(2) | df['Period'].eq(4)) & df['Home_Zone'].eq('Off'), 'yC'] = df['yC'] * -1
+# If home team offsensive net in 1 & 3 is defined as 89, 0 
+df.loc[(df['xC'] < 0), 'yC'] = df['yC'] * -1
+df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
+
 
 # Add a binary column for Goals 
 df['Goal'] = numpy.where(df.Event == 'GOAL', 1, 0)
@@ -65,8 +65,10 @@ for index, row in df.iterrows():
     df.at[index, 'Angle Degrees'] = all_angles[1]
     df.at[index, 'Distance'] = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
 
-with pandas.option_context('display.max_rows', None,
+with pandas.option_context('display.max_rows', 1000,
                        'display.max_columns', None,
                        'display.precision', 3,
                        ):
     print(df)
+
+print(df['Distance'].mean())
