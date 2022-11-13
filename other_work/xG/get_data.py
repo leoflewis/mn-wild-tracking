@@ -1,4 +1,6 @@
 import hockey_scraper, pandas, numpy, math
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 # This program constructs a data set and an Expected Goals model.
 
@@ -6,7 +8,7 @@ import hockey_scraper, pandas, numpy, math
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2021020001, 2021020002, 2021020003, 2021020004], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_games([2022020017, 2022020034, 2022020045, 2022020067], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -31,7 +33,10 @@ df.drop(['Game_Id', 'Date', 'Description', 'Time_Elapsed',
 df.dropna(inplace=True)
 
 # Drop worthless events, also drop shootout events
-events = df[ (df.Event == 'FAC') | (df.Event == 'BLOCK') | (df.Event == 'PENL') | (df.Event == 'GIVE') | (df.Event == 'TAKE') | (df.Event == 'STOP') | (df.Event == 'HIT') | (df.Period == 5)].index
+events = df[ (df.Event == 'FAC') | (df.Event == 'BLOCK') | 
+    (df.Event == 'PENL') | (df.Event == 'GIVE') | (df.Event == 'TAKE') | 
+    (df.Event == 'STOP') | (df.Event == 'HIT') | (df.Period == 5)].index
+
 df.drop(events, inplace=True)
 
 # We need to transpose goals/shots/misses so it reads as if they all happen on the same net.
@@ -45,7 +50,7 @@ df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
 # Add a binary column for Goals 
 df['Goal'] = numpy.where(df.Event == 'GOAL', 1, 0)
 
-# This functions calculate the angle to the center of the net at (87.50, 0) in radians and degrees.
+# This function calculates the angle to the center of the net at (89, 0) in radians and degrees.
 def angles(x, y):
     num = math.sqrt(((89.0 - x) * (89.0 - x)) + ((y) * (y)))
     radians = numpy.arcsin(y/num)
@@ -54,8 +59,8 @@ def angles(x, y):
     return arr
 
 # Initiliaze empty columns
-df['Angle Radians'] = ''
-df['Angle Degrees'] = ''
+df['Angle_Radians'] = ''
+df['Angle_Degrees'] = ''
 df['Distance'] = ''
 
 # Add values to columns
@@ -64,8 +69,8 @@ for index, row in df.iterrows():
     x = row['xC']
     y = row['yC']
     all_angles = angles(x, y)
-    df.at[index, 'Angle Radians'] = all_angles[0]
-    df.at[index, 'Angle Degrees'] = all_angles[1]
+    df.at[index, 'Angle_Radians'] = all_angles[0]
+    df.at[index, 'Angle_Degrees'] = all_angles[1]
     df.at[index, 'Distance'] = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
 
 with pandas.option_context('display.max_rows', 1000,
@@ -75,3 +80,14 @@ with pandas.option_context('display.max_rows', 1000,
     print(df)
 
 print(df['Distance'].mean())
+
+# Data should be good to go at this point. 
+# We will build the model
+predictors = ['xC', 'yC', 'Angle_Radians', 'Angle_Degrees', 'Distance']
+x = df[predictors] 
+y = df.Goal
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size =.2, random_state=16)
+model = LogisticRegression()
+model.fit(x_train, y_train)
+score = model.score(x_test, y_test)
+print(score)
