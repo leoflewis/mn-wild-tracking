@@ -1,6 +1,7 @@
 import hockey_scraper, pandas, numpy, math
 
-# This program constructs a data set for Expected Goals model.
+# This program constructs a data set and an Expected Goals model.
+
 # We want Fenwick(unblocked) shot data for as many games as possible. 
 
 # Scrape data
@@ -34,11 +35,12 @@ events = df[ (df.Event == 'FAC') | (df.Event == 'BLOCK') | (df.Event == 'PENL') 
 df.drop(events, inplace=True)
 
 # We need to transpose goals/shots/misses so it reads as if they all happen on the same net.
-
-# If home team offsensive net in 1 & 3 is defined as 89, 0 
+# So we will tranpose the shot location if it is in the negative half of the rink.
+# Technically this could incorrecly move some shots that occur form over the red line.
+# Those dont happen very often and we alreay removed empty net goals, so there shouldnt be any goals from beyond the red line.
+# Overall this could add a little extra noise, but it should not be anything too serious. 
 df.loc[(df['xC'] < 0), 'yC'] = df['yC'] * -1
 df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
-
 
 # Add a binary column for Goals 
 df['Goal'] = numpy.where(df.Event == 'GOAL', 1, 0)
@@ -57,6 +59,7 @@ df['Angle Degrees'] = ''
 df['Distance'] = ''
 
 # Add values to columns
+# If someone wants to show me a quicker way to do this, I would be very greatful.  
 for index, row in df.iterrows():
     x = row['xC']
     y = row['yC']
