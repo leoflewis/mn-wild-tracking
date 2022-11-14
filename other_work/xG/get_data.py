@@ -1,6 +1,9 @@
 import hockey_scraper, pandas, numpy, math
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import metrics
 
 # This program constructs a data set and an Expected Goals model.
 
@@ -8,7 +11,7 @@ from sklearn.model_selection import train_test_split
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2022020017, 2022020034, 2022020045, 2022020067], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_games([2022020017, 2022020034, 2022020045, 2022020067, 2022020074, 2022020101, 2022020113, 2022020132], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -90,4 +93,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size =.2, random_
 model = LogisticRegression()
 model.fit(x_train, y_train)
 score = model.score(x_test, y_test)
+predictions = model.predict(x_test)
+print('goals ' + str(len(df.Event=='GOAL')))
+print('fenwick shots' + str(len(df.Event)))
 print(score)
+cm = metrics.confusion_matrix(y_test, predictions)
+print(cm)
