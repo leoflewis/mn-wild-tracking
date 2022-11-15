@@ -11,7 +11,8 @@ from sklearn import metrics
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2022020017, 2022020034, 2022020045, 2022020067, 2022020074, 2022020101, 2022020113, 2022020132], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_games([2022020017, 2022020034, 2022020045, 2022020067, 2022020074, 2022020101, 2022020113, 2022020132,
+2022020140, 2022020151, 2022020167, 2022020206, 2022020210, 2022020224, 2022020240], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -99,3 +100,16 @@ print('fenwick shots' + str(len(df.Event)))
 print(score)
 cm = metrics.confusion_matrix(y_test, predictions)
 print(cm)
+print(model.coef_)
+
+x = 86
+y = -6
+new_angles = angles(x, y)
+new_distance = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
+new_shot = [[x, y, new_angles[0], new_angles[1], new_distance]]
+new_df = pandas.DataFrame(new_shot, columns=predictors)
+pred = model.predict_proba(new_df) 
+print(pred)
+df.loc[len(df.index)] = [0, "NET", "", "NET", "OFF", "", "", "", 89, 0, -1, 0, 0, 0]
+sns.scatterplot(x='xC', y='yC', hue='Goal', marker='o', data=df)
+plt.savefig("xG.png")
