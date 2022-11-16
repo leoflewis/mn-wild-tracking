@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import metrics
+from joblib import dump
 
 # This program constructs a data set and an Expected Goals model.
 
@@ -113,3 +114,4 @@ print(pred)
 df.loc[len(df.index)] = [0, "NET", "", "NET", "OFF", "", "", "", 89, 0, -1, 0, 0, 0]
 sns.scatterplot(x='xC', y='yC', hue='Goal', marker='o', data=df)
 plt.savefig("xG.png")
+dump(model, 'xG.joblib')

@@ -130,11 +130,52 @@
 <div class="imge">
     <div><img src="{{fig}}" alt="shot chart"></div>
     <div><img src="{{chart}}" alt="shot chart"></div>
-    <div class="plays">
-        <p>{{status}}</p>
-        {% for line in data %}
-        <p>{{line}}</p>
-        {%endfor%}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ALL STRENTHS</th>
+                <th scope="col">SF</th>
+                <th scope="col">SA</th>
+                <th scope="col">S%</th>
+                <th scope="col">CF</th>
+                <th scope="col">CA</th>
+                <th scope="col">C%</th>
+                <th scope="col">FF</th>
+                <th scope="col">FA</th>
+                <th scope="col">F%</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">{{game.gameData.teams.home.name}}</th>
+                <th scope="row">{{corsi.home_shots}}</th>
+                <th scope="row">{{corsi.away_shots}}</th>
+                <th scope="row">{{corsi.home_shot_share}}</th>
+                <th scope="row">{{corsi.home_corsi_for}}</th>
+                <th scope="row">{{corsi.away_corsi_for}}</th>
+                <th scope="row">{{corsi.home_corsi_share}}</th>
+                <th scope="row">{{corsi.home_fenwick_for}}</th>
+                <th scope="row">{{corsi.away_fenwick_for}}</th>
+                <th scope="row">{{corsi.home_fenwick_share}}</th>
+            </tr>
+            <tr>
+                <th scope="row">{{game.gameData.teams.away.name}}</th>
+                <th scope="row">{{corsi.away_shots}}</th>
+                <th scope="row">{{corsi.home_shots}}</th>
+                <th scope="row">{{corsi.away_shot_share}}</th>
+                <th scope="row">{{corsi.away_corsi_for}}</th>
+                <th scope="row">{{corsi.home_corsi_for}}</th>
+                <th scope="row">{{corsi.away_corsi_share}}</th>
+                <th scope="row">{{corsi.away_fenwick_for}}</th>
+                <th scope="row">{{corsi.home_fenwick_for}}</th>
+                <th scope="row">{{corsi.away_fenwick_share}}</th>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        {% for line in xG %}
+            <p>{{line}}</p>
+        {% endfor %}
     </div>
 </div>
 

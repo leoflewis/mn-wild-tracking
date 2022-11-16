@@ -1,9 +1,9 @@
-from re import A
 from django.db import models
 from matplotlib import pyplot as plt 
-import requests
+import requests, numpy, pandas, math
 from os.path import exists
 import io, base64, json
+from joblib import load
 
 
 class Game(models.Model):
@@ -11,6 +11,38 @@ class Game(models.Model):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         return response.json()
     
+    def get_angles(self, x, y):
+        num = math.sqrt(((89.0 - x) * (89.0 - x)) + ((y) * (y)))
+        radians = numpy.arcsin(y/num)
+        degrees = (radians * 180.0) / 3.14
+        arr = [radians, degrees]
+        return arr
+
+    def get_xG(self, id): 
+        response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
+        data = response.json()
+        model = load('dataservice/xG.joblib') 
+        predictors = ['xC', 'yC', 'Angle_Radians', 'Angle_Degrees', 'Distance']
+        xG = []
+        for play in data['liveData']['plays']['allPlays']:
+            period = play['about']['period']
+            if play['result']['event'] == 'Goal' or play['result']['event'] == 'Shot' or play['result']['event'] == 'Missed Shot':
+                x = int(play['coordinates']['x'])
+                y = int(play['coordinates']['y'])
+                if x < 0:
+                    if not (x * - 1) > 90:
+                        x = x * -1
+                        if y < 0:
+                            y = y * -1
+                new_angles = self.get_angles(x, y)
+                new_distance = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
+                new_shot = [[x, y, new_angles[0], new_angles[1], new_distance]]
+                new_df = pandas.DataFrame(new_shot, columns=predictors)
+                pred = model.predict_proba(new_df)
+                desc = play['result']['description'] + ' worth ' + str(pred[0][1]) +  ' xG.'
+                xG.append(desc)
+        return xG
+
     def make_figure(self, id):
         fig, axes = plt.subplots(figsize=(20, 10))
         #axes = plt.axes()
@@ -86,7 +118,7 @@ class Game(models.Model):
         
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
-            if play['result']['event'] == 'Goal':
+            if play['result']['event'] == 'Goal' and period < 5:
                 if play['team']['triCode'] == home:
                     x_coord = play['coordinates']['x'] * 10
                     y_coord = play['coordinates']['y'] * 10
@@ -244,24 +276,25 @@ class Game(models.Model):
         fig = plt.figure(1)
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
-            if play['result']['event'] == 'Goal':
-                if play['team']['triCode'] == home:
-                    time = convert_time(play['about']['periodTime'], period)
-                    home_shots += 1
-                    plt.plot(time, home_shots,marker='o', color='blue')
-                if play['team']['triCode'] == away:
-                    time = convert_time(play['about']['periodTime'], period)
-                    away_shots += 1
-                    plt.plot(time, away_shots, marker='o', color='red')
-            if play['result']['event'] == 'Shot':
-                if play['team']['triCode'] == home:
-                    time = convert_time(play['about']['periodTime'], period)
-                    home_shots += 1
-                    plt.plot(time, home_shots, marker='^', color='blue')
-                if play['team']['triCode'] == away:
-                    time = convert_time(play['about']['periodTime'], period)
-                    away_shots += 1
-                    plt.plot(time, away_shots, marker='^', color='red')
+            if period < 5:
+                if play['result']['event'] == 'Goal':
+                    if play['team']['triCode'] == home:
+                        time = convert_time(play['about']['periodTime'], period)
+                        home_shots += 1
+                        plt.plot(time, home_shots,marker='o', color='blue')
+                    if play['team']['triCode'] == away:
+                        time = convert_time(play['about']['periodTime'], period)
+                        away_shots += 1
+                        plt.plot(time, away_shots, marker='o', color='red')
+                if play['result']['event'] == 'Shot':
+                    if play['team']['triCode'] == home:
+                        time = convert_time(play['about']['periodTime'], period)
+                        home_shots += 1
+                        plt.plot(time, home_shots, marker='^', color='blue')
+                    if play['team']['triCode'] == away:
+                        time = convert_time(play['about']['periodTime'], period)
+                        away_shots += 1
+                        plt.plot(time, away_shots, marker='^', color='red')
         plt.ylabel("Shots + Goals")
         plt.xlabel("Time")
         img = io.BytesIO()
