@@ -24,6 +24,10 @@ class Game(models.Model):
         model = load('dataservice/xG.joblib') 
         predictors = ['xC', 'yC', 'Angle_Radians', 'Angle_Degrees', 'Distance']
         xG = []
+        home_xG = 0
+        away_xG = 0
+        home = data['gameData']['teams']['home']['triCode']
+        away = data['gameData']['teams']['away']['triCode']
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
             if play['result']['event'] == 'Goal' or play['result']['event'] == 'Shot' or play['result']['event'] == 'Missed Shot':
@@ -39,8 +43,14 @@ class Game(models.Model):
                 new_shot = [[x, y, new_angles[0], new_angles[1], new_distance]]
                 new_df = pandas.DataFrame(new_shot, columns=predictors)
                 pred = model.predict_proba(new_df)
-                desc = play['result']['description'] + ' worth ' + str(pred[0][1]) +  ' xG.'
-                xG.append(desc)
+                pred = round(pred[0][1], 4)
+                #desc = play['result']['description'] + ' worth ' + str(pred) +  ' xG.'
+                if play['team']['triCode'] == home:
+                    home_xG += pred
+                if play['team']['triCode'] == away:
+                    away_xG += pred
+        xG.append("home: " + str(round(home_xG, 4)))
+        xG.append("away: " + str(round(away_xG, 4)))
         return xG
 
     def make_figure(self, id):
