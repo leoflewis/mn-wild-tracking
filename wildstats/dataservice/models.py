@@ -22,7 +22,7 @@ class Game(models.Model):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         data = response.json()
         model = load('dataservice/xG.joblib') 
-        predictors = ['xC', 'yC', 'Angle_Radians', 'Angle_Degrees', 'Distance']
+        predictors = ['xC', 'yC', 'Type_', 'Type_BACKHAND', 'Type_DEFLECTED', 'Type_SLAP SHOT', 'Type_SNAP SHOT', 'Type_TIP-IN', 'Type_WRAP-AROUND', 'Type_WRIST SHOT', 'Angle_Radians', 'Angle_Degrees', 'Distance']
         xG = []
         home_xG = 0
         away_xG = 0
@@ -40,7 +40,7 @@ class Game(models.Model):
                             y = y * -1
                 new_angles = self.get_angles(x, y)
                 new_distance = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
-                new_shot = [[x, y, new_angles[0], new_angles[1], new_distance]]
+                new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 0, 1, new_angles[0], new_angles[1], new_distance]]
                 new_df = pandas.DataFrame(new_shot, columns=predictors)
                 pred = model.predict_proba(new_df)
                 pred = round(pred[0][1], 4)
@@ -49,9 +49,13 @@ class Game(models.Model):
                     home_xG += pred
                 if play['team']['triCode'] == away:
                     away_xG += pred
-        xG.append("home: " + str(round(home_xG, 4)))
-        xG.append("away: " + str(round(away_xG, 4)))
-        return xG
+        xG_json = {}
+        xG_total = round(home_xG, 4) + round(away_xG, 4)
+        xG_json['home'] = round(home_xG, 4)
+        xG_json['away'] = round(away_xG, 4)
+        xG_json['home_xg_share'] = round((home_xG / xG_total) * 100, 2)
+        xG_json['away_xg_share'] = round((away_xG / xG_total) * 100, 2)
+        return xG_json
 
     def make_figure(self, id):
         fig, axes = plt.subplots(figsize=(20, 10))
