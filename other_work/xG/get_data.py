@@ -12,7 +12,7 @@ from joblib import dump
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2022020017, 2022020034], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_seasons([2021], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -114,6 +114,8 @@ print("coefficients: "+ str(model.coef_))
 # Our columns after modeling are as follows:
 # Period, xC, yC, Goal, Type_, Type_BACKHAND, Type_DEFLECTED, Type_SLAP SHOT, Type_SNAP SHOT, Type_TIP-IN, Type_WRAP-AROUND, Type_WRIST SHOT, Angle_Radians, Angle_Degrees, Distance
 
+
+# Lets make a prediction
 x = 86
 y = -6
 new_angles = angles(x, y)
