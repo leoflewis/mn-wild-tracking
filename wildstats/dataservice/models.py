@@ -40,7 +40,26 @@ class Game(models.Model):
                             y = y * -1
                 new_angles = self.get_angles(x, y)
                 new_distance = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
-                new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 0, 1, new_angles[0], new_angles[1], new_distance]]
+                try:
+                    #try to get shot type. missed shots do not have a type but can still have xG
+                    type = play['result']['secondaryType']
+                    if type == 'Wrist Shot':
+                        new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 0, 1, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Backhand':
+                        new_shot = [[x, y, 0, 1, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Deflected':
+                        new_shot = [[x, y, 0, 0, 1, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Slap Shot':
+                        new_shot = [[x, y, 0, 0, 0, 1, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Snap Shot':
+                        new_shot = [[x, y, 0, 0, 0, 0, 1, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Tip-in':
+                        new_shot = [[x, y, 0, 1, 0, 0, 0, 1, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                    elif type == 'Wrap-around':
+                        new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 1, 0, new_angles[0], new_angles[1], new_distance]]
+                except:
+                    # in the event of no shot type given
+                    new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
                 new_df = pandas.DataFrame(new_shot, columns=predictors)
                 pred = model.predict_proba(new_df)
                 pred = round(pred[0][1], 4)
@@ -51,10 +70,11 @@ class Game(models.Model):
                     away_xG += pred
         xG_json = {}
         xG_total = round(home_xG, 4) + round(away_xG, 4)
-        xG_json['home'] = round(home_xG, 4)
-        xG_json['away'] = round(away_xG, 4)
-        xG_json['home_xg_share'] = round((home_xG / xG_total) * 100, 2)
-        xG_json['away_xg_share'] = round((away_xG / xG_total) * 100, 2)
+        if xG_total > 0:
+            xG_json['home'] = round(home_xG, 4)
+            xG_json['away'] = round(away_xG, 4)
+            xG_json['home_xg_share'] = round((home_xG / xG_total) * 100, 2)
+            xG_json['away_xg_share'] = round((away_xG / xG_total) * 100, 2)
         return xG_json
 
     def make_figure(self, id):
