@@ -6,6 +6,8 @@ import seaborn as sns
 from sklearn import metrics
 from joblib import dump
 
+# Currently this model does not acocunt for rebounds or strenghts. I hope to add this in the future.
+
 # This program constructs a data set and an Expected Goals model.
 
 # We want Fenwick(unblocked) shot data for as many games as possible. 
@@ -19,8 +21,7 @@ print("Finished scraping.")
 df = data['pbp']
 
 # Drop unnecessary columns
-df.drop(['Game_Id', 'Date', 'Description', 'Time_Elapsed',
-       'Seconds_Elapsed', 'Ev_Zone', 'Ev_Team',
+df.drop(['Date', 'Description', 'Time_Elapsed', 'Ev_Zone', 'Ev_Team',
         'Away_Team', 'Home_Team', 'p1_ID', 'p2_name',
        'p2_ID', 'p3_name', 'p3_ID', 'awayPlayer1', 'awayPlayer1_id',
        'awayPlayer2', 'awayPlayer2_id', 'awayPlayer3', 'awayPlayer3_id',
@@ -32,6 +33,17 @@ df.drop(['Game_Id', 'Date', 'Description', 'Time_Elapsed',
        'Away_Score', 'Home_Score', 'Away_Goalie_Id',
        'Home_Goalie_Id', 'Home_Coach',
        'Away_Coach', 'Home_Zone', 'p1_name'], axis=1, inplace=True)
+
+
+# Make a new column for whether or not a shot is a rebound.
+# If same game and same period as the previous row, and margin of time elapsed between events is <= 4 mark 1 for rebound
+
+
+
+
+# Make a new column for whether or not its a power play goal. 
+# If event team is home and int(df.Strength[0]) > int(df.Strength[2]), mark man advantage, else mark 0
+# If event team is away and int(df.Strength[0]) < int(df.Strength[2]), mark man advantage, else mark 0
 
 
 # Drop empty values, this will get rid of lots of unecessary events. It will also get rid of empty net goals.
@@ -48,6 +60,7 @@ df.drop(events, inplace=True)
 # Add a binary column for Goals 
 df['Goal'] = numpy.where(df.Event == 'GOAL', 1, 0)
 
+# We no longer need these columns and can drop them
 df.drop(['Away_Goalie', 'Home_Goalie', 'Event', 'Strength'], axis=1, inplace=True)
 
 # We need to transpose goals/shots/misses so it reads as if they all happen on the same net.
@@ -56,7 +69,7 @@ df.drop(['Away_Goalie', 'Home_Goalie', 'Event', 'Strength'], axis=1, inplace=Tru
 # Those dont happen very often and we already removed empty net goals, so there shouldnt be any goals from beyond the red line.
 # This will add a couple shots that take place behind the net, but they will never be goals, so it wont give them a good score.
 # Overall this could add a little extra noise, but it should not be anything too serious. 
-df.loc[(df['xC'] < 0), 'yC'] = df['yC'] * -1
+df.loc[((df['xC'] < 0) and (df['yC'] < 0)), 'yC'] = df['yC'] * -1
 df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
 
 # This function calculates the angle to the center of the net at (89, 0) in radians and degrees.
