@@ -42,11 +42,6 @@ for index, row in df.iterrows():
     total = etime - stime
     df.at[index, 'duration'] = total
 
-with pandas.option_context('display.max_rows', 1000,
-                       'display.max_columns', None,
-                       'display.precision', 3,
-                       ):
-    print(df)
 
 fig, axes = plt.subplots(figsize=(20, 10))
 axes.barh(df.name, df.duration, left=df.startTime, color=df.color)
