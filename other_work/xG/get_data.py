@@ -116,7 +116,7 @@ print(cm)
 print("coefficients: "+ str(model.coef_))
 
 # Our columns after modeling are as follows:
-# xC, yC, Rebound, Power Play, Goal, Type_, Type_BACKHAND, Type_DEFLECTED, Type_SLAP SHOT, Type_SNAP SHOT, Type_TIP-IN, Type_WRAP-AROUND, Type_WRIST SHOT, Angle_Radians, Angle_Degrees, Distance
+# xC, yC, Rebound, Power Play, Goal, Type_BACKHAND, Type_DEFLECTED, Type_SLAP SHOT, Type_SNAP SHOT, Type_TIP-IN, Type_WRAP-AROUND, Type_WRIST SHOT, Angle_Radians, Angle_Degrees, Distance
 
 print("***PREDICTION***")
 # Lets make a prediction
@@ -131,7 +131,7 @@ print("odds of 0 and 1: " + str(pred))
 
 
 # Adding another point with -1 goal value that serve as the net in the graph created below
-df.loc[len(df.index)] = [0, 89, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+df.loc[len(df.index)] = [89, 0, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 sns.scatterplot(x='xC', y='yC', hue='Goal', marker='o', data=df)
 plt.savefig("xG.png")
 dump(model, 'xG.joblib')
