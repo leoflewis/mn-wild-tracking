@@ -1,8 +1,8 @@
 {% extends "home.html" %}
 {% block content %}
-
+{% load mathfilters %}
 <div class="container">
-
+    <img src="https://assets.nhle.com/mugs/nhl/20222023/MIN/{{player_id}}.png">
     <div class="row">
         <div class="col-md-8 mt-3 left">
             {% for person in player.people %}
@@ -23,6 +23,7 @@
                             <th scope="col">goals</th>
                             <th scope="col">assits</th>
                             <th scope="col">points</th>
+                            <th scope="col">points/g</th>
                             <th scope="col">toi</th>
                             <th scope="col">hits</th>
                             <th scope="col">pim</th>
@@ -38,6 +39,7 @@
                                 <td>{{current_season.stat.goals}}</td>
                                 <td>{{current_season.stat.assists}}</td>
                                 <td>{{current_season.stat.points}}</td>
+                                <td>{{current_season.stat.points|div:current_season.stat.games}}</td>
                                 <td>{{current_season.stat.timeOnIce}}</td>
                                 <td>{{current_season.stat.hits}}</td>
                                 <td>{{current_season.stat.pim}}</td>

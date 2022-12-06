@@ -26,7 +26,7 @@ def player(request, player_id):
     player = Player().get_player(player_id)
     stats = Player().get_player_stats(player_id)
     current_season = stats['stats'][0]['splits'][len(stats['stats'][0]['splits'])-1]
-    context ={"player": player, "stats": stats['stats'], "current_season": current_season}
+    context ={"player": player, "stats": stats['stats'], "current_season": current_season, "player_id":player_id}
     if(player['people'][0]['primaryPosition']['type']) != 'Goalie':
         return render(request, "../templates/player.html", context)
     else:

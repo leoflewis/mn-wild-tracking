@@ -207,14 +207,14 @@ class Game(models.Model):
                     away_A_shots_x.append(x_coord)
                     away_A_shots_y.append(y_coord)
                     #plt.plot(x_coord, y_coord, marker='x', color='red')
-        plt.scatter(home_goals_x, home_goals_y, marker='o', label='home goal', color='blue')
-        plt.scatter(away_goals_x, away_goals_y, marker='o', label='away goal', color='red')
+        plt.scatter(home_goals_x, home_goals_y, marker='o', label='home goal', color='darkgreen')
+        plt.scatter(away_goals_x, away_goals_y, marker='o', label='away goal', color='darkred')
 
-        plt.scatter(home_shots_x, home_shots_y, marker='^', label='home shot', color='blue')
-        plt.scatter(away_shots_x, away_shots_y, marker='^', label='away shot', color='red')
+        plt.scatter(home_shots_x, home_shots_y, marker='^', label='home shot', color='darkgreen')
+        plt.scatter(away_shots_x, away_shots_y, marker='^', label='away shot', color='darkred')
 
-        plt.scatter(home_A_shots_x, home_A_shots_y, marker='x', label='home shot attempt', color='blue')
-        plt.scatter(away_A_shots_x, away_A_shots_y, marker='x', label='away shot attempt', color='red')
+        plt.scatter(home_A_shots_x, home_A_shots_y, marker='x', label='home shot attempt', color='darkgreen')
+        plt.scatter(away_A_shots_x, away_A_shots_y, marker='x', label='away shot attempt', color='darkred')
 
         plt.title(away + " at " + home)
         plt.legend(loc="upper right", ncol=2)
@@ -307,7 +307,7 @@ class Game(models.Model):
         time = 0 
         home_shots = 0
         away_shots = 0
-        fig = plt.figure(1)
+        fig, axes = plt.subplots(figsize=(20, 10))
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
             if period < 5:
@@ -315,20 +315,20 @@ class Game(models.Model):
                     if play['team']['triCode'] == home:
                         time = convert_time(play['about']['periodTime'], period)
                         home_shots += 1
-                        plt.plot(time, home_shots,marker='o', color='blue')
+                        plt.plot(time, home_shots,marker='o', color='darkgreen')
                     if play['team']['triCode'] == away:
                         time = convert_time(play['about']['periodTime'], period)
                         away_shots += 1
-                        plt.plot(time, away_shots, marker='o', color='red')
+                        plt.plot(time, away_shots, marker='o', color='darkred')
                 if play['result']['event'] == 'Shot':
                     if play['team']['triCode'] == home:
                         time = convert_time(play['about']['periodTime'], period)
                         home_shots += 1
-                        plt.plot(time, home_shots, marker='^', color='blue')
+                        plt.plot(time, home_shots, marker='^', color='darkgreen')
                     if play['team']['triCode'] == away:
                         time = convert_time(play['about']['periodTime'], period)
                         away_shots += 1
-                        plt.plot(time, away_shots, marker='^', color='red')
+                        plt.plot(time, away_shots, marker='^', color='darkred')
         plt.ylabel("Shots + Goals")
         plt.xlabel("Time")
         img = io.BytesIO()
@@ -344,33 +344,35 @@ class Game(models.Model):
 
         df = pandas.DataFrame(shifts)
         df = df.astype(str)
-        df['name'] = df.firstName + " " + df.lastName
+        try:
+            df['name'] = df.firstName + " " + df.lastName
 
-        df.drop(['eventDescription', 'detailCode', 'eventDetails', 'typeCode', 'gameId', 'shiftNumber', 'teamName', 'hexValue', 'id', 'eventNumber', 'teamId', 'firstName', 'lastName'], axis=1, inplace=True)
-        df = df.astype(str)
-        df['color'] = numpy.where(df.teamAbbrev == 'MIN', 'b', 'r')
+            df.drop(['eventDescription', 'detailCode', 'eventDetails', 'typeCode', 'gameId', 'shiftNumber', 'teamName', 'hexValue', 'id', 'eventNumber', 'teamId', 'firstName', 'lastName'], axis=1, inplace=True)
+            df = df.astype(str)
+            df['color'] = numpy.where(df.teamAbbrev == 'MIN', 'darkgreen', 'darkred')
+            df.sort_values('teamAbbrev', inplace=True)
+            for index, row in df.iterrows():
+                period = row['period']
+                start_time = row['startTime']
+                stime = convert_time(start_time, period) 
+                df.at[index, 'startTime'] = stime
 
-        for index, row in df.iterrows():
-            period = row['period']
-            start_time = row['startTime']
-            stime = convert_time(start_time, period) 
-            df.at[index, 'startTime'] = stime
+                end_time = row['endTime']
+                etime = convert_time(end_time, period) 
+                df.at[index, 'endTime'] = etime
 
-            end_time = row['endTime']
-            etime = convert_time(end_time, period) 
-            df.at[index, 'endTime'] = etime
-
-            total = etime - stime
-            df.at[index, 'duration'] = total
-        print(df)
-        fig, axes = plt.subplots(figsize=(20, 10))
-        axes.barh(df.name, df.duration, left=df.startTime, color=df.color)
-        img = io.BytesIO()
-        plt.savefig(img, format='png', bbox_inches='tight')
-        img.seek(0)
-        encoded = base64.b64encode(img.getvalue())
-        plt.close(fig)
-        return "data:image/png;base64, {}".format(encoded.decode('utf-8'))
+                total = etime - stime
+                df.at[index, 'duration'] = total
+            fig, axes = plt.subplots(figsize=(20, 10))
+            axes.barh(df.name, df.duration, left=df.startTime, color=df.color)
+            img = io.BytesIO()
+            plt.savefig(img, format='png', bbox_inches='tight')
+            img.seek(0)
+            encoded = base64.b64encode(img.getvalue())
+            plt.close(fig)
+            return "data:image/png;base64, {}".format(encoded.decode('utf-8'))
+        except:
+            print("no data ")
 
 def convert_time(time, period):
     period = int(period)
