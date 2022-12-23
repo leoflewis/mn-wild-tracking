@@ -21,9 +21,10 @@
                             <th scope="col">team</th>
                             <th scope="col">games</th>
                             <th scope="col">goals</th>
-                            <th scope="col">assits</th>
+                            <th scope="col">assists</th>
                             <th scope="col">points</th>
-                            <th scope="col">points/g</th>
+                            <th scope="col">points/gm</th>
+                            <th scope="col">pace</th>
                             <th scope="col">toi</th>
                             <th scope="col">hits</th>
                             <th scope="col">pim</th>
@@ -40,6 +41,7 @@
                                 <td>{{current_season.stat.assists}}</td>
                                 <td>{{current_season.stat.points}}</td>
                                 <td>{{current_season.stat.points|div:current_season.stat.games}}</td>
+                                <td>{{current_season.stat.points|div:current_season.stat.games|mul:82}} points</td>
                                 <td>{{current_season.stat.timeOnIce}}</td>
                                 <td>{{current_season.stat.hits}}</td>
                                 <td>{{current_season.stat.pim}}</td>
@@ -58,7 +60,7 @@
                             <th scope="col">team</th>
                             <th scope="col">games</th>
                             <th scope="col">goals</th>
-                            <th scope="col">assits</th>
+                            <th scope="col">assists</th>
                             <th scope="col">points</th>
                             <th scope="col">toi</th>
                             <th scope="col">hits</th>

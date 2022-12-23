@@ -22,14 +22,20 @@ class Game(models.Model):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         data = response.json()
         model = load('dataservice/xG.joblib') 
-        predictors = ['xC', 'yC', 'Type_', 'Type_BACKHAND', 'Type_DEFLECTED', 'Type_SLAP SHOT', 'Type_SNAP SHOT', 'Type_TIP-IN', 'Type_WRAP-AROUND', 'Type_WRIST SHOT', 'Angle_Radians', 'Angle_Degrees', 'Distance']
+        predictors = ['xC', 'yC', 'Rebound', 'Power Play', 'Type_', 'Type_BACKHAND', 'Type_DEFLECTED', 'Type_SLAP SHOT', 'Type_SNAP SHOT', 'Type_TIP-IN', 'Type_WRAP-AROUND', 'Type_WRIST SHOT', 'Angle_Radians', 'Angle_Degrees', 'Distance']
+        print("length of prdictors " + str(len(predictors)))
         xG = []
         home_xG = 0
         away_xG = 0
+        prev_play = None
+        prev_period = 0
+        prev_ev_team = 0
+        prev_time = 0
         home = data['gameData']['teams']['home']['triCode']
         away = data['gameData']['teams']['away']['triCode']
         for play in data['liveData']['plays']['allPlays']:
             period = play['about']['period']
+            time = int(play['about']['periodTime'].replace(':', ''))
             if play['result']['event'] == 'Goal' or play['result']['event'] == 'Shot' or play['result']['event'] == 'Missed Shot':
                 x = int(play['coordinates']['x'])
                 y = int(play['coordinates']['y'])
@@ -53,13 +59,24 @@ class Game(models.Model):
                         new_shot = [[x, y, 0, 0, 0, 1, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
                     elif type == 'Snap Shot':
                         new_shot = [[x, y, 0, 0, 0, 0, 1, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
-                    elif type == 'Tip-in':
+                    elif type == 'Tip-In':
                         new_shot = [[x, y, 0, 1, 0, 0, 0, 1, 0, 0, new_angles[0], new_angles[1], new_distance]]
                     elif type == 'Wrap-around':
                         new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 1, 0, new_angles[0], new_angles[1], new_distance]]
+                    else:
+                        new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
                 except:
                     # in the event of no shot type given
                     new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+                print("before rebound etc: " + str(len(new_shot[0])))                    
+                if period == prev_period and prev_ev_team == play['team']['id'] and prev_play in ['Goal', 'Shot', 'Misses Shot'] and time - prev_time > 300:
+                    new_shot[0].insert(2, 1)
+                else:
+                    new_shot[0].insert(2, 0)
+                new_shot[0].insert(3, 0)
+                print("after rebound etc " + str(len(new_shot[0])))
+                print(new_shot)
+                print(play)
                 new_df = pandas.DataFrame(new_shot, columns=predictors)
                 pred = model.predict_proba(new_df)
                 pred = round(pred[0][1], 4)
@@ -68,6 +85,11 @@ class Game(models.Model):
                     home_xG += pred
                 if play['team']['triCode'] == away:
                     away_xG += pred
+                
+                prev_ev_team = play['team']['id']
+            prev_period = period
+            prev_play = play['result']['event']
+            prev_time = time
         xG_json = {}
         xG_total = round(home_xG, 4) + round(away_xG, 4)
         if xG_total > 0:
@@ -373,6 +395,12 @@ class Game(models.Model):
             return "data:image/png;base64, {}".format(encoded.decode('utf-8'))
         except:
             print("no data ")
+
+    def player_score(self, game_id):
+        response = requests.get("https://api.nhle.com/stats/rest/en/shiftcharts?cayenneExp=gameId={}".format(game_id))
+        players = response.json()['liveData']['boxscore']['teams']['home']['players']
+        return players
+
 
 def convert_time(time, period):
     period = int(period)

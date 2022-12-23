@@ -14,7 +14,7 @@ from joblib import dump
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_games([2022020283], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_seasons([2022], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -44,7 +44,7 @@ df['Rebound'] = numpy.where((df.Game_Id == df.Game_Id.shift(1)) & (df.Period == 
 df.dropna(inplace=True)
 
 # Make a new column for whether or not its a power play goal. 
-df['Power Play'] = numpy.where( ((df.Ev_Team == home) & (df.Strength.str[0] > df.Strength.str[2])) | ((df.Ev_Team == away) & (df.Strength.str[0] < df.Strength.str[2])), 1, 0)
+df['Power Play'] = numpy.where( ((df.Ev_Team.equals(home)) & (df.Strength.str[0] > df.Strength.str[2])) | ((df.Ev_Team.equals(away)) & (df.Strength.str[0] < df.Strength.str[2])), 1, 0)
 
 # Drop worthless events, also drop shootout events
 events = df[ (df.Event == 'FAC') | (df.Event == 'BLOCK') | (df.Event == 'PENL') | (df.Event == 'GIVE') | (df.Event == 'TAKE') | (df.Event == 'STOP') | (df.Event == 'HIT') | (df.Period == 5)].index
@@ -64,6 +64,12 @@ df.drop(['Away_Goalie', 'Home_Goalie', 'Strength', 'Game_Id', 'Seconds_Elapsed',
 # Overall this could add a little extra noise, but it should not be anything too serious. 
 df.loc[((df['xC'] < 0) & (df['yC'] < 0)), 'yC'] = df['yC'] * -1
 df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
+
+
+df.drop(df[df['xC'] > 89].index, inplace=True)
+
+max = df.loc[df['xC'].idxmax()]
+print(max)
 
 # This function calculates the angle to the center of the net at (89, 0) in radians and degrees.
 def angles(x, y):
@@ -99,9 +105,9 @@ with pandas.option_context('display.max_rows', 1000,
                        ):
     print(df)
 
-# Data should be good to go at this point. 
+# Data should be good to go at this point.  
 # We will build the model
-predictors = ['xC', 'yC', 'Rebound', 'Power Play', 'Type_BACKHAND', 'Type_DEFLECTED', 'Type_SLAP SHOT', 'Type_SNAP SHOT', 'Type_TIP-IN', 'Type_WRAP-AROUND', 'Type_WRIST SHOT', 'Angle_Radians', 'Angle_Degrees', 'Distance', ]
+predictors = ['xC', 'yC', 'Rebound', 'Power Play', 'Type_', 'Type_BACKHAND', 'Type_DEFLECTED', 'Type_SLAP SHOT', 'Type_SNAP SHOT', 'Type_TIP-IN', 'Type_WRAP-AROUND', 'Type_WRIST SHOT', 'Angle_Radians', 'Angle_Degrees', 'Distance']
 x = df[predictors]
 y = df.Goal
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size =.2, random_state=16)
@@ -120,18 +126,17 @@ print("coefficients: "+ str(model.coef_))
 
 print("***PREDICTION***")
 # Lets make a prediction
-x = 86
-y = -6
+x = 35
+y = 36
 new_angles = angles(x, y)
 new_distance = numpy.sqrt((y - 0)**2 + (x - 89.0)**2)
-new_shot = [[x, y, 0, 0, 0, 0, 1, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
+new_shot = [[x, y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, new_angles[0], new_angles[1], new_distance]]
 new_df = pandas.DataFrame(new_shot, columns=predictors)
 pred = model.predict_proba(new_df) 
 print("odds of 0 and 1: " + str(pred))
 
-
 # Adding another point with -1 goal value that serve as the net in the graph created below
-df.loc[len(df.index)] = [89, 0, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+df.loc[len(df.index)] = [89, 0, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 sns.scatterplot(x='xC', y='yC', hue='Goal', marker='o', data=df)
-plt.savefig("xG.png")
+plt.savefig("xG2.png")
 dump(model, 'xG.joblib')
