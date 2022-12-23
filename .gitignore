@@ -1,3 +1,8 @@
 wildstats/wildstats/settings.py
 wildstats/wildstats/wsgi.py
 wildstats/wildstats/asgi.py
+wildstats/dataservice/__pycache__/*
+wildstats/wildstats/__pycache__/*
+wildstats/dataservice/migrations/*
+wildstats/db.sqlite3
+wildstats/dataservice/pics/*
