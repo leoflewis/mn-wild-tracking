@@ -14,7 +14,7 @@ from joblib import dump
 
 # Scrape data
 print("Begining to scrape pbp. No shifts. Depending on what timerange was requested, this could take awhile.")
-data = hockey_scraper.scrape_seasons([2022], False, data_format = 'Pandas')
+data = hockey_scraper.scrape_seasons([2021, 2022], False, data_format = 'Pandas')
 print("Finished scraping.")
 
 # Access dataframe
@@ -62,8 +62,12 @@ df.drop(['Away_Goalie', 'Home_Goalie', 'Strength', 'Game_Id', 'Seconds_Elapsed',
 # Those dont happen very often and we already removed empty net goals, so there shouldnt be any goals from beyond the red line.
 # This will add a couple shots that take place behind the net, but they will never be goals, so it wont give them a good score.
 # Overall this could add a little extra noise, but it should not be anything too serious. 
-df.loc[((df['xC'] < 0) & (df['yC'] < 0)), 'yC'] = df['yC'] * -1
-df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
+df['xC'] = numpy.where(df['xC'] < 0, df['xC'] * -1, df['xC'])
+df['yC'] = numpy.where(df['xC'] < 0, df['yC'] * -1, df['yC'])
+
+#df.loc[(df['xC'] < 0), 'xC'] = df['xC'] * -1
+#df.loc[(df['xC'] < 0), 'yC'] = df['yC'] * -1
+
 
 
 df.drop(df[df['xC'] > 89].index, inplace=True)
