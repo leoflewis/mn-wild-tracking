@@ -44,7 +44,9 @@ def game(request, game_id):
     chart = Game().chart_corsi(game_id)
     xG = Game().get_xG(game_id)
     shifts = Game().get_shifts(game_id)
-    context = {"game" : game, "corsi": corsi, "fig": pic, "chart": chart, "xG": xG, "shifts": shifts}
+    scores = Game().get_game_score(game_id)
+    print(scores)
+    context = {"game" : game, "corsi": corsi, "fig": pic, "chart": chart, "xG": xG, "shifts": shifts, "scores": scores}
     return render(request, "../templates/game.html", context)
 
 

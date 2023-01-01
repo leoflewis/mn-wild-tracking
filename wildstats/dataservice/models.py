@@ -11,6 +11,38 @@ class Game(models.Model):
         response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
         return response.json()
     
+    def get_game_score(self, id):
+        response = requests.get("http://statsapi.web.nhl.com/api/v1/game/{}/feed/live".format(id))
+        data = response.json()
+        away = data['liveData']['boxscore']['teams']['away']['players']
+        home = data['liveData']['boxscore']['teams']['home']['players']
+        players = {**away, **home} 
+        df = pandas.DataFrame(columns=['Name', 'Goals', 'Assists', 'Shots', 'Hits', 'Blocks', 'TOI', 'PenalyMinutes', 'GoalDifferential', 'GameScore'])
+        for i in players:
+            player = players.get(i)
+            name = player['person']['fullName']
+            position = player['position']['code']
+            stats = player['stats']
+            if position != "G" and len(stats) > 0:
+                goals = player['stats']['skaterStats']['goals']
+                assists = player['stats']['skaterStats']['assists']
+                shots = player['stats']['skaterStats']['shots']
+                hits = player['stats']['skaterStats']['hits']
+                blocks = player['stats']['skaterStats']['blocked']
+                giveaways = player['stats']['skaterStats']['giveaways']
+                takeaways = player['stats']['skaterStats']['takeaways']
+                pen = giveaways = player['stats']['skaterStats']['penaltyMinutes']
+                plus_minus = giveaways = player['stats']['skaterStats']['plusMinus']
+                TOI = player['stats']['skaterStats']['timeOnIce']
+                TOI = TOI.replace(":", ".")
+                TOI = float(TOI)
+                game_score = (.75 * goals) + (.6 * assists) + (.075 * shots) + (.05 * blocks) + (.01 * hits) + (-.05 * giveaways) + (.02 * TOI) + (.05 * takeaways) + (-.07 * pen) + (.2 * plus_minus) 
+                df.loc[len(df)] = [name, goals, assists, shots, hits, blocks, TOI, pen, plus_minus, game_score]
+        #df = df.sort_values(by=['GameScore'], ascending=False)
+        json = df.to_json()
+        return df
+
+
     def get_angles(self, x, y):
         num = math.sqrt(((89.0 - x) * (89.0 - x)) + ((y) * (y)))
         radians = numpy.arcsin(y/num)
@@ -67,16 +99,12 @@ class Game(models.Model):
                         new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
                 except:
                     # in the event of no shot type given
-                    new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]
-                print("before rebound etc: " + str(len(new_shot[0])))                    
+                    new_shot = [[x, y, 1, 0, 0, 0, 0, 0, 0, 0, new_angles[0], new_angles[1], new_distance]]                  
                 if period == prev_period and prev_ev_team == play['team']['id'] and prev_play in ['Goal', 'Shot', 'Misses Shot'] and time - prev_time > 300:
                     new_shot[0].insert(2, 1)
                 else:
                     new_shot[0].insert(2, 0)
                 new_shot[0].insert(3, 0)
-                print("after rebound etc " + str(len(new_shot[0])))
-                print(new_shot)
-                print(play)
                 new_df = pandas.DataFrame(new_shot, columns=predictors)
                 pred = model.predict_proba(new_df)
                 pred = round(pred[0][1], 4)

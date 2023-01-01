@@ -88,6 +88,7 @@
     <div><img src="{{fig}}" alt="shot chart"></div>
     <div><img src="{{chart}}" alt="shot chart"></div>
     <div><img src="{{shifts}}" alt="shift chart"></div>
+    <h2>Team Stats</h2>
     <table class="table">
         <thead>
             <tr>
@@ -136,6 +137,258 @@
                 <th scope="row">{{xG.away}}</th>
                 <th scope="row">{{xG.home}}</th>
                 <th scope="row">{{xG.away_xg_share}}</th>
+            </tr>
+        </tbody>
+    </table>
+    <h2>Individual Player Score</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                {% for score in scores %}
+                <th scope="col">{{score}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">{{scores.Name.0}}</th>
+                <td>{{scores.Goals.0}}</td>
+                <td>{{scores.Assists.0}}</td>
+                <td>{{scores.Shots.0}}</td>
+                <td>{{scores.Hits.0}}</td>
+                <td>{{scores.Blocks.0}}</td>
+                <td>{{scores.TOI.0}}</td>
+                <td>{{scores.PenalyMinutes.0}}</td>
+                <td>{{scores.GoalDifferential.0}}</td>
+                <td>{{scores.GameScore.0}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.1}}</th>
+                <td>{{scores.Goals.1}}</td>
+                <td>{{scores.Assists.1}}</td>
+                <td>{{scores.Shots.1}}</td>
+                <td>{{scores.Hits.1}}</td>
+                <td>{{scores.Blocks.1}}</td>
+                <td>{{scores.TOI.1}}</td>
+                <td>{{scores.PenalyMinutes.1}}</td>
+                <td>{{scores.GoalDifferential.1}}</td>
+                <td>{{scores.GameScore.1}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.2}}</th>
+                <td>{{scores.Goals.2}}</td>
+                <td>{{scores.Assists.2}}</td>
+                <td>{{scores.Shots.2}}</td>
+                <td>{{scores.Hits.2}}</td>
+                <td>{{scores.Blocks.2}}</td>
+                <td>{{scores.TOI.2}}</td>
+                <td>{{scores.PenalyMinutes.2}}</td>
+                <td>{{scores.GoalDifferential.2}}</td>
+                <td>{{scores.GameScore.2}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.3}}</th>
+                <td>{{scores.Goals.3}}</td>
+                <td>{{scores.Assists.3}}</td>
+                <td>{{scores.Shots.3}}</td>
+                <td>{{scores.Hits.3}}</td>
+                <td>{{scores.Blocks.3}}</td>
+                <td>{{scores.TOI.3}}</td>
+                <td>{{scores.PenalyMinutes.3}}</td>
+                <td>{{scores.GoalDifferential.3}}</td>
+                <td>{{scores.GameScore.3}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.4}}</th>
+                <td>{{scores.Goals.4}}</td>
+                <td>{{scores.Assists.4}}</td>
+                <td>{{scores.Shots.4}}</td>
+                <td>{{scores.Hits.4}}</td>
+                <td>{{scores.Blocks.4}}</td>
+                <td>{{scores.TOI.4}}</td>
+                <td>{{scores.PenalyMinutes.4}}</td>
+                <td>{{scores.GoalDifferential.4}}</td>
+                <td>{{scores.GameScore.4}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.5}}</th>
+                <td>{{scores.Goals.5}}</td>
+                <td>{{scores.Assists.5}}</td>
+                <td>{{scores.Shots.5}}</td>
+                <td>{{scores.Hits.5}}</td>
+                <td>{{scores.Blocks.5}}</td>
+                <td>{{scores.TOI.5}}</td>
+                <td>{{scores.PenalyMinutes.5}}</td>
+                <td>{{scores.GoalDifferential.5}}</td>
+                <td>{{scores.GameScore.5}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.6}}</th>
+                <td>{{scores.Goals.6}}</td>
+                <td>{{scores.Assists.6}}</td>
+                <td>{{scores.Shots.6}}</td>
+                <td>{{scores.Hits.6}}</td>
+                <td>{{scores.Blocks.6}}</td>
+                <td>{{scores.TOI.6}}</td>
+                <td>{{scores.PenalyMinutes.6}}</td>
+                <td>{{scores.GoalDifferential.6}}</td>
+                <td>{{scores.GameScore.6}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.7}}</th>
+                <td>{{scores.Goals.7}}</td>
+                <td>{{scores.Assists.7}}</td>
+                <td>{{scores.Shots.7}}</td>
+                <td>{{scores.Hits.7}}</td>
+                <td>{{scores.Blocks.7}}</td>
+                <td>{{scores.TOI.7}}</td>
+                <td>{{scores.PenalyMinutes.7}}</td>
+                <td>{{scores.GoalDifferential.7}}</td>
+                <td>{{scores.GameScore.7}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.8}}</th>
+                <td>{{scores.Goals.8}}</td>
+                <td>{{scores.Assists.8}}</td>
+                <td>{{scores.Shots.8}}</td>
+                <td>{{scores.Hits.8}}</td>
+                <td>{{scores.Blocks.8}}</td>
+                <td>{{scores.TOI.8}}</td>
+                <td>{{scores.PenalyMinutes.8}}</td>
+                <td>{{scores.GoalDifferential.8}}</td>
+                <td>{{scores.GameScore.8}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.9}}</th>
+                <td>{{scores.Goals.9}}</td>
+                <td>{{scores.Assists.9}}</td>
+                <td>{{scores.Shots.9}}</td>
+                <td>{{scores.Hits.9}}</td>
+                <td>{{scores.Blocks.9}}</td>
+                <td>{{scores.TOI.9}}</td>
+                <td>{{scores.PenalyMinutes.9}}</td>
+                <td>{{scores.GoalDifferential.9}}</td>
+                <td>{{scores.GameScore.9}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.10}}</th>
+                <td>{{scores.Goals.10}}</td>
+                <td>{{scores.Assists.10}}</td>
+                <td>{{scores.Shots.10}}</td>
+                <td>{{scores.Hits.10}}</td>
+                <td>{{scores.Blocks.10}}</td>
+                <td>{{scores.TOI.10}}</td>
+                <td>{{scores.PenalyMinutes.10}}</td>
+                <td>{{scores.GoalDifferential.10}}</td>
+                <td>{{scores.GameScore.10}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.11}}</th>
+                <td>{{scores.Goals.11}}</td>
+                <td>{{scores.Assists.11}}</td>
+                <td>{{scores.Shots.11}}</td>
+                <td>{{scores.Hits.11}}</td>
+                <td>{{scores.Blocks.11}}</td>
+                <td>{{scores.TOI.11}}</td>
+                <td>{{scores.PenalyMinutes.11}}</td>
+                <td>{{scores.GoalDifferential.11}}</td>
+                <td>{{scores.GameScore.11}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.12}}</th>
+                <td>{{scores.Goals.12}}</td>
+                <td>{{scores.Assists.12}}</td>
+                <td>{{scores.Shots.12}}</td>
+                <td>{{scores.Hits.12}}</td>
+                <td>{{scores.Blocks.12}}</td>
+                <td>{{scores.TOI.12}}</td>
+                <td>{{scores.PenalyMinutes.12}}</td>
+                <td>{{scores.GoalDifferential.12}}</td>
+                <td>{{scores.GameScore.12}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.13}}</th>
+                <td>{{scores.Goals.13}}</td>
+                <td>{{scores.Assists.13}}</td>
+                <td>{{scores.Shots.13}}</td>
+                <td>{{scores.Hits.13}}</td>
+                <td>{{scores.Blocks.13}}</td>
+                <td>{{scores.TOI.13}}</td>
+                <td>{{scores.PenalyMinutes.13}}</td>
+                <td>{{scores.GoalDifferential.13}}</td>
+                <td>{{scores.GameScore.13}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.14}}</th>
+                <td>{{scores.Goals.14}}</td>
+                <td>{{scores.Assists.14}}</td>
+                <td>{{scores.Shots.14}}</td>
+                <td>{{scores.Hits.14}}</td>
+                <td>{{scores.Blocks.14}}</td>
+                <td>{{scores.TOI.14}}</td>
+                <td>{{scores.PenalyMinutes.14}}</td>
+                <td>{{scores.GoalDifferential.14}}</td>
+                <td>{{scores.GameScore.14}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.15}}</th>
+                <td>{{scores.Goals.15}}</td>
+                <td>{{scores.Assists.15}}</td>
+                <td>{{scores.Shots.15}}</td>
+                <td>{{scores.Hits.15}}</td>
+                <td>{{scores.Blocks.15}}</td>
+                <td>{{scores.TOI.15}}</td>
+                <td>{{scores.PenalyMinutes.15}}</td>
+                <td>{{scores.GoalDifferential.15}}</td>
+                <td>{{scores.GameScore.15}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.16}}</th>
+                <td>{{scores.Goals.16}}</td>
+                <td>{{scores.Assists.16}}</td>
+                <td>{{scores.Shots.16}}</td>
+                <td>{{scores.Hits.16}}</td>
+                <td>{{scores.Blocks.16}}</td>
+                <td>{{scores.TOI.16}}</td>
+                <td>{{scores.PenalyMinutes.16}}</td>
+                <td>{{scores.GoalDifferential.16}}</td>
+                <td>{{scores.GameScore.16}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.17}}</th>
+                <td>{{scores.Goals.17}}</td>
+                <td>{{scores.Assists.17}}</td>
+                <td>{{scores.Shots.17}}</td>
+                <td>{{scores.Hits.17}}</td>
+                <td>{{scores.Blocks.17}}</td>
+                <td>{{scores.TOI.17}}</td>
+                <td>{{scores.PenalyMinutes.17}}</td>
+                <td>{{scores.GoalDifferential.17}}</td>
+                <td>{{scores.GameScore.17}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.18}}</th>
+                <td>{{scores.Goals.18}}</td>
+                <td>{{scores.Assists.18}}</td>
+                <td>{{scores.Shots.18}}</td>
+                <td>{{scores.Hits.18}}</td>
+                <td>{{scores.Blocks.18}}</td>
+                <td>{{scores.TOI.18}}</td>
+                <td>{{scores.PenalyMinutes.18}}</td>
+                <td>{{scores.GoalDifferential.18}}</td>
+                <td>{{scores.GameScore.18}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{scores.Name.19}}</th>
+                <td>{{scores.Goals.19}}</td>
+                <td>{{scores.Assists.19}}</td>
+                <td>{{scores.Shots.19}}</td>
+                <td>{{scores.Hits.19}}</td>
+                <td>{{scores.Blocks.19}}</td>
+                <td>{{scores.TOI.19}}</td>
+                <td>{{scores.PenalyMinutes.19}}</td>
+                <td>{{scores.GoalDifferential.19}}</td>
+                <td>{{scores.GameScore.19}}</td>
             </tr>
         </tbody>
     </table>
