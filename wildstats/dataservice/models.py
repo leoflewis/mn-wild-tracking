@@ -36,7 +36,7 @@ class Game(models.Model):
                 TOI = player['stats']['skaterStats']['timeOnIce']
                 TOI = TOI.replace(":", ".")
                 TOI = float(TOI)
-                game_score = (.75 * goals) + (.6 * assists) + (.075 * shots) + (.05 * blocks) + (.01 * hits) + (-.05 * giveaways) + (.02 * TOI) + (.05 * takeaways) + (-.07 * pen) + (.2 * plus_minus) 
+                game_score = (.75 * goals) + (.6 * assists) + (.075 * shots) + (.05 * blocks) + (.01 * hits) + (-.05 * giveaways) + (.02 * TOI) + (.05 * takeaways) + (-.07 * pen) + (.3 * plus_minus) 
                 df.loc[len(df)] = [name, goals, assists, shots, hits, blocks, TOI, pen, plus_minus, game_score]
         #df = df.sort_values(by=['GameScore'], ascending=False)
         json = df.to_json()
