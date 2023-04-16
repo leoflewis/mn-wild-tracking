@@ -456,7 +456,7 @@ class Player(models.Model):
 
 class Schedule(models.Model):
     def get_schedule(self):
-        response = requests.get("https://statsapi.web.nhl.com/api/v1/schedule?teamId=30&season=20222023&gameType=R")
+        response = requests.get("https://statsapi.web.nhl.com/api/v1/schedule?teamId=30&season=20222023&gameType=R&gameType=P")
         return response.json()
 
 class Home(models.Model):
